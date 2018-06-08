@@ -52,8 +52,12 @@ var ROOM_MIN = 1;
 var ROOM_MAX = 5;
 var GUESTS_MIN = 1;
 var GUESTS_MAX = 20;
+var PIN_WIDTH = 50; // из css
+var PIN_HEIGHT = 70; // из css
 
 var map = document.querySelector('.map');
+var mapWithPins = document.querySelector('.map__pins');
+var pinTemplate = document.querySelector('#pin__template').content.querySelector('.map__pin');
 
 // Имитация активного режима
 var simulateDynamicMode = function () {
@@ -99,7 +103,7 @@ var getRandomLengthArray = function (array) {
 
 // Создание массива индексов, перетасованных в случайном порядке
 var getArrayOfRandomIndex = function (array) {
-  var arrayOfIndex = getArray(0, array.length - 1);
+  var arrayOfIndex = getArray(1, array.length);
   return shuffleArray(arrayOfIndex);
 };
 
@@ -143,4 +147,26 @@ var initAds = function () {
   return newAds;
 };
 
-initAds();
+var ads = initAds();
+
+// Создание DOM-элемента метки на карте
+var renderPin = function (pin) {
+  var pinElement = pinTemplate.cloneNode(true);
+  var pinAvatar = pinTemplate.querySelector('img');
+  pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
+  pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
+  pinAvatar.src = pin.author.avatar;
+  pinAvatar.alt = pin.offer.title;
+  return pinElement;
+};
+
+// Заполнение карты DOM-элементами на основе массива с объектами
+var fillMap = function () {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < ads.length; i++) {
+    fragment.appendChild(renderPin(ads[i]));
+    mapWithPins.appendChild(fragment);
+  }
+};
+
+fillMap();
