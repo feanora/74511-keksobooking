@@ -58,6 +58,7 @@ var PIN_HEIGHT = 70; // из css
 var map = document.querySelector('.map');
 var mapWithPins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin__template').content.querySelector('.map__pin');
+var cadrTemplate = document.querySelector('#pin__template').content.querySelector('.map__card');
 var ads = [];
 
 // Имитация активного режима
@@ -118,6 +119,7 @@ var createAvatarAddress = function (i) {
   var avatarPath = 'img/avatars/user';
   var avatarFormat = '.png';
   var avatarNumber = allAvatarNumbers[allAvatarNumbersIndex[i]];
+  // Если изображений станет больше 9, то 0 не нужен
   if (avatarNumber < 10) {
     avatarNumber = '0' + avatarNumber;
   }
@@ -160,7 +162,7 @@ var initAds = function () {
 // Создание DOM-элемента метки на карте
 var renderPin = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
-  var pinAvatar = pinTemplate.querySelector('.map__pin img');
+  var pinAvatar = pinTemplate.querySelector('img');
   pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
   pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
   pinAvatar.src = pin.author.avatar;
@@ -184,3 +186,41 @@ var init = function () {
 };
 
 init();
+
+// Заполнение списка преимуществ DOM-элементами. Не работает!
+var renderFeaturesBlock = function (features) {
+  var featuresList = cadrTemplate.querySelector('.popup__features');
+  // Удаление потомков
+  while (featuresList.firstChild) {
+    featuresList.removeChild(featuresList.firstChild);
+  }
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < features.length; i++) {
+    var featuresItem = document.createElement('li');
+    var newFeaturesClass = 'popup__feature' + features[i];
+    featuresItem.classList.add('popup__feature', newFeaturesClass);
+    fragment.appendChild(featuresItem);
+  }
+  return featuresList.appendChild(fragment);
+};
+
+var renderAdPopup = function (ad) {
+  var adPopup = cadrTemplate.cloneNode(true);
+  adPopup.querySelector('.popup__title').textContent = ad.offer.title;
+  adPopup.querySelector('.popup__text--address').textContent = ad.offer.address;
+  adPopup.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
+  adPopup.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ads[1].offer.guests + ' гостей';
+  adPopup.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
+  renderFeaturesBlock(ad.offer.features);
+  adPopup.querySelector('.popup__description').textContent = ad.offer.description;
+  adPopup.querySelector('.popup__avatar').src = ad.author.avatar;
+  return adPopup;
+};
+map.querySelector('.map__filters-container');
+var renderAd = function () {
+  var fragment = document.createDocumentFragment();
+  fragment.appendChild(renderAdPopup(ads[1]));
+  map.insertBefore(fragment, map.querySelector('.map__filters-container'));
+};
+
+renderAd();
