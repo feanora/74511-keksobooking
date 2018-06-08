@@ -58,13 +58,12 @@ var PIN_HEIGHT = 70; // из css
 var map = document.querySelector('.map');
 var mapWithPins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin__template').content.querySelector('.map__pin');
+var ads = [];
 
 // Имитация активного режима
 var simulateDynamicMode = function () {
   map.classList.remove('map--faded');
 };
-
-simulateDynamicMode();
 
 // Генерация случайного числа от min до max
 var getRandomNumber = function (min, max) {
@@ -103,16 +102,27 @@ var getRandomLengthArray = function (array) {
 
 // Создание массива индексов, перетасованных в случайном порядке
 var getArrayOfRandomIndex = function (array) {
-  var arrayOfIndex = getArray(1, array.length);
+  var arrayOfIndex = getArray(0, array.length - 1);
   return shuffleArray(arrayOfIndex);
 };
 
-// Массив с номерами аватаров
-var AllAvatarNumbers = getArray(NUMBER_OF_AVATAR_MIN, NUMBER_OF_AVATAR_MAX);
-// Массив со случайными индексами массива аватаров
-var AllAvatarNumbersIndex = getArrayOfRandomIndex(AllAvatarNumbers);
 // Массив со случайными индексами массива заголовков предолжения
-var AllTitleNumbersIndex = getArrayOfRandomIndex(ALL_AD_TITLE);
+var allTitleNumbersIndex = getArrayOfRandomIndex(ALL_AD_TITLE);
+// Массив с номерами аватаров
+var allAvatarNumbers = getArray(NUMBER_OF_AVATAR_MIN, NUMBER_OF_AVATAR_MAX);
+// Массив со случайными индексами массива аватаров
+var allAvatarNumbersIndex = getArrayOfRandomIndex(allAvatarNumbers);
+
+// Генерация адреса аватара
+var createAvatarAddress = function (i) {
+  var avatarPath = 'img/avatars/user';
+  var avatarFormat = '.png';
+  var avatarNumber = allAvatarNumbers[allAvatarNumbersIndex[i]];
+  if (avatarNumber < 10) {
+    avatarNumber = '0' + avatarNumber;
+  }
+  return avatarPath + avatarNumber + avatarFormat;
+};
 
 // Генерация массива с объявлениями
 var initAds = function () {
@@ -122,10 +132,10 @@ var initAds = function () {
     var locationY = getRandomNumber(COODRINATE_Y_MIN, COODRINATE_Y_MAX);
     var randomAd = {
       author: {
-        avatar: 'img/avatars/user0' + AllAvatarNumbersIndex[i] + '.png'
+        avatar: createAvatarAddress(i)
       },
       offer: {
-        title: ALL_AD_TITLE[AllTitleNumbersIndex[i]],
+        title: ALL_AD_TITLE[allTitleNumbersIndex[i]],
         address: locationX + ', ' + locationY,
         price: getRandomNumber(PRICE_MIN, PRICE_MAX),
         type: ALL_TYPE_HOUSING[getRandomNumber(0, ALL_TYPE_HOUSING.length - 1)],
@@ -147,12 +157,10 @@ var initAds = function () {
   return newAds;
 };
 
-var ads = initAds();
-
 // Создание DOM-элемента метки на карте
 var renderPin = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
-  var pinAvatar = pinTemplate.querySelector('img');
+  var pinAvatar = pinTemplate.querySelector('.map__pin img');
   pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
   pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
   pinAvatar.src = pin.author.avatar;
@@ -169,4 +177,10 @@ var fillMap = function () {
   }
 };
 
-fillMap();
+var init = function () {
+  simulateDynamicMode();
+  ads = initAds();
+  fillMap();
+};
+
+init();
