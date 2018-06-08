@@ -187,7 +187,7 @@ var init = function () {
 
 init();
 
-// Заполнение списка преимуществ DOM-элементами. Не работает!
+// Заполнение списка преимуществ DOM-элементами
 var renderFeaturesBlock = function (features) {
   var featuresList = cadrTemplate.querySelector('.popup__features');
   // Удаление потомков
@@ -197,7 +197,7 @@ var renderFeaturesBlock = function (features) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < features.length; i++) {
     var featuresItem = document.createElement('li');
-    var newFeaturesClass = 'popup__feature' + features[i];
+    var newFeaturesClass = 'popup__feature--' + features[i];
     featuresItem.classList.add('popup__feature', newFeaturesClass);
     fragment.appendChild(featuresItem);
   }
@@ -211,11 +211,13 @@ var renderAdPopup = function (ad) {
   adPopup.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
   adPopup.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ads[1].offer.guests + ' гостей';
   adPopup.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
-  renderFeaturesBlock(ad.offer.features);
   adPopup.querySelector('.popup__description').textContent = ad.offer.description;
   adPopup.querySelector('.popup__avatar').src = ad.author.avatar;
   return adPopup;
 };
+
+renderFeaturesBlock(ads[1].offer.features);
+
 map.querySelector('.map__filters-container');
 var renderAd = function () {
   var fragment = document.createDocumentFragment();
