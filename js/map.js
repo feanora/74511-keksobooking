@@ -187,13 +187,17 @@ var init = function () {
 
 init();
 
+// Удаление потомков
+var deleteChild = function (parent) {
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild);
+  }
+};
+
 // Заполнение списка преимуществ DOM-элементами
 var renderFeaturesBlock = function (features) {
   var featuresList = cadrTemplate.querySelector('.popup__features');
-  // Удаление потомков
-  while (featuresList.firstChild) {
-    featuresList.removeChild(featuresList.firstChild);
-  }
+  deleteChild(featuresList);
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < features.length; i++) {
     var featuresItem = document.createElement('li');
