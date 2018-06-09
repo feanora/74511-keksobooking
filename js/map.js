@@ -55,15 +55,17 @@ var GUESTS_MAX = 20;
 var PIN_WIDTH = 50; // из css
 var PIN_HEIGHT = 70; // из css
 
-var map = document.querySelector('.map');
-var pinsLocation = document.querySelector('.map__pins');
-var pinTemplate = document.querySelector('#pin__template').content.querySelector('.map__pin');
-var cadrTemplate = document.querySelector('#pin__template').content.querySelector('.map__card');
+var mapElement = document.querySelector('.map');
+var pinsLocationElement = document.querySelector('.map__pins');
+var pinTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__pin');
+var cadrTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__card');
+var mapFiltersContainerElement = mapElement.querySelector('.map__filters-container');
+var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
 var ads = [];
 
 // Имитация активного режима
 var simulateDynamicMode = function () {
-  map.classList.remove('map--faded');
+  mapElement.classList.remove('map--faded');
 };
 
 // Генерация случайного числа от min до max
@@ -161,12 +163,12 @@ var initAds = function () {
 
 // Создание DOM-элемента метки на карте
 var initPinElement = function (pin) {
-  var pinElement = pinTemplate.cloneNode(true);
-  var pinAvatar = pinTemplate.querySelector('img');
+  var pinElement = pinTemplateElement.cloneNode(true);
+  var pinAvatarElement = pinTemplateElement.querySelector('img');
   pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
   pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
-  pinAvatar.src = pin.author.avatar;
-  pinAvatar.alt = pin.offer.title;
+  pinAvatarElement.src = pin.author.avatar;
+  pinAvatarElement.alt = pin.offer.title;
   return pinElement;
 };
 
@@ -175,17 +177,9 @@ var fillMap = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < ads.length; i++) {
     fragment.appendChild(initPinElement(ads[i]));
-    pinsLocation.appendChild(fragment);
+    pinsLocationElement.appendChild(fragment);
   }
 };
-
-var init = function () {
-  simulateDynamicMode();
-  ads = initAds();
-  fillMap();
-};
-
-init();
 
 // Удаление потомков
 var deleteChildElement = function (parent) {
@@ -195,9 +189,7 @@ var deleteChildElement = function (parent) {
 };
 
 // Заполнение списка преимуществ DOM-элементами
-var fillFeaturesList = function (features) {
-  var featuresList = cadrTemplate.querySelector('.popup__features');
-  deleteChildElement(featuresList);
+/* var fillFeaturesList = function (features) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < features.length; i++) {
     var featuresItem = document.createElement('li');
@@ -205,11 +197,24 @@ var fillFeaturesList = function (features) {
     featuresItem.classList.add('popup__feature', newFeaturesClass);
     fragment.appendChild(featuresItem);
   }
-  return featuresList.appendChild(fragment);
+  return featuresListElement.appendChild(fragment);
+}; */
+
+// Заполнение родительского элемента дочерними
+var fillParentElement = function (items, tag, newClassnamePart, oldItemClass, parentElement) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < items.length; i++) {
+    var item = document.createElement('tag');
+    var newItemClass = newClassnamePart + items[i];
+    item.classList.add(oldItemClass, newItemClass);
+    fragment.appendChild(item);
+  }
+  return parentElement.appendChild(fragment);
 };
 
+// Создание DOM-элемента попапа объявления
 var initAdPopupElement = function (ad) {
-  var adPopupElement = cadrTemplate.cloneNode(true);
+  var adPopupElement = cadrTemplateElement.cloneNode(true);
   adPopupElement.querySelector('.popup__title').textContent = ad.offer.title;
   adPopupElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
@@ -220,13 +225,19 @@ var initAdPopupElement = function (ad) {
   return adPopupElement;
 };
 
-fillFeaturesList(ads[0].offer.features);
-
-map.querySelector('.map__filters-container');
-var renderAdPopup = function () {
-  var fragment = document.createDocumentFragment();
-  fragment.appendChild(initAdPopupElement(ads[0]));
-  map.insertBefore(fragment, map.querySelector('.map__filters-container'));
+var renderAdPopapElement = function (ad) {
+  deleteChildElement(featuresListElement);
+  // fillFeaturesList(ad.offer.features);
+  fillParentElement(ad.offer.features, 'li', 'popup__feature--', 'popup__feature', featuresListElement);
+  mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
 };
 
-renderAdPopup();
+// Точка входа в программу
+var init = function () {
+  simulateDynamicMode();
+  ads = initAds();
+  fillMap();
+  renderAdPopapElement(ads[1]);
+};
+
+init();
