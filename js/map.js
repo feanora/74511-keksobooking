@@ -54,6 +54,8 @@ var GUESTS_MIN = 1;
 var GUESTS_MAX = 20;
 var PIN_WIDTH = 50; // из css
 var PIN_HEIGHT = 70; // из css
+var PHOTO_WIDTH = 45; // из css
+var PHOTO_HEIGHT = 40; // из css
 
 var mapElement = document.querySelector('.map');
 var pinsLocationElement = document.querySelector('.map__pins');
@@ -61,6 +63,7 @@ var pinTemplateElement = document.querySelector('#pin__template').content.queryS
 var cadrTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__card');
 var mapFiltersContainerElement = mapElement.querySelector('.map__filters-container');
 var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
+var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
 var ads = [];
 
 // Имитация активного режима
@@ -186,30 +189,38 @@ var deleteChildElement = function (parent) {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
+  return parent;
 };
 
-// Заполнение списка преимуществ DOM-элементами
-/* var fillFeaturesList = function (features) {
-  var fragment = document.createDocumentFragment();
-  for (var i = 0; i < features.length; i++) {
-    var featuresItem = document.createElement('li');
-    var newFeaturesClass = 'popup__feature--' + features[i];
-    featuresItem.classList.add('popup__feature', newFeaturesClass);
-    fragment.appendChild(featuresItem);
-  }
-  return featuresListElement.appendChild(fragment);
-}; */
-
 // Заполнение родительского элемента дочерними
-var fillParentElement = function (items, tag, newClassnamePart, oldItemClass, parentElement) {
+var fillParentElement = function (items, tag, Classname, parentElement) {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < items.length; i++) {
-    var item = document.createElement('tag');
-    var newItemClass = newClassnamePart + items[i];
-    item.classList.add(oldItemClass, newItemClass);
+    var item = document.createElement(tag);
+    item.className = Classname;
     fragment.appendChild(item);
   }
-  return parentElement.appendChild(fragment);
+  parentElement.appendChild(fragment);
+};
+
+// Заполнение списка преимуществ
+var fillFeaturesListElement = function (ad, features) {
+  deleteChildElement(featuresListElement);
+  fillParentElement(features, 'li', 'popup__feature', featuresListElement);
+  for (var i = 0; i < features.length; i++) {
+    var newFeaturesClass = 'popup__feature--' + features[i];
+    featuresListElement.children[i].classList.add(newFeaturesClass);
+  }
+};
+// Заполнение списка фотографий
+var fillPhotosListElement = function (ad, photos) {
+  deleteChildElement(photosListElement);
+  fillParentElement(photos, 'img', 'popup__photo', photosListElement);
+  for (var i = 0; i < photos.length; i++) {
+    photosListElement.children[i].src = photos[i];
+    photosListElement.children[i].width = PHOTO_WIDTH;
+    photosListElement.children[i].height = PHOTO_HEIGHT;
+  }
 };
 
 // Создание DOM-элемента попапа объявления
@@ -226,9 +237,8 @@ var initAdPopupElement = function (ad) {
 };
 
 var renderAdPopapElement = function (ad) {
-  deleteChildElement(featuresListElement);
-  // fillFeaturesList(ad.offer.features);
-  fillParentElement(ad.offer.features, 'li', 'popup__feature--', 'popup__feature', featuresListElement);
+  fillFeaturesListElement(ad, ad.offer.features);
+  fillPhotosListElement(ad, ad.offer.photos);
   mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
 };
 
