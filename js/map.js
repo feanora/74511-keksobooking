@@ -1,6 +1,6 @@
 'use strict';
 
-var ALL_AD_TITLE = [
+var AD_TITLES = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
   'Огромный прекрасный дворец',
@@ -10,23 +10,23 @@ var ALL_AD_TITLE = [
   'Уютное бунгало далеко от моря',
   'Неуютное бунгало по колено в воде'
 ];
-var ALL_TYPE_HOUSING = [
+var HOUSING_TYPES = [
   'palace',
   'flat',
   'house',
   'bungalo'
 ];
-var ALL_CHEKIN_TIME = [
+var CHEKIN_TIMES = [
   '12:00',
   '13:00',
   '14:00'
 ];
-var ALL_CHEKOUT_TIME = [
+var CHEKOUT_TIMES = [
   '12:00',
   '13:00',
   '14:00'
 ];
-var ALL_FEATURES_HOUSING = [
+var HOUSING_FEATURES = [
   'wifi',
   'dishwasher',
   'parking',
@@ -34,14 +34,14 @@ var ALL_FEATURES_HOUSING = [
   'elevator',
   'conditioner'
 ];
-var ALL_PHOTOS_HOUSING = [
+var HOUSING_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
-var NUMBER_OF_AVATAR_MIN = 1;
-var NUMBER_OF_AVATAR_MAX = 8;
-var NUMBER_OF_AD = 8;
+var AVATAR_NUMBER_MIN = 1;
+var AVATAR_NUMBER__MAX = 8;
+var AD_NUMBER = 8;
 var COODRINATE_X_MIN = 300;
 var COODRINATE_X_MAX = 900;
 var COODRINATE_Y_MIN = 130;
@@ -56,7 +56,7 @@ var PIN_WIDTH = 50; // из css
 var PIN_HEIGHT = 70; // из css
 
 var map = document.querySelector('.map');
-var mapWithPins = document.querySelector('.map__pins');
+var pinsLocation = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('#pin__template').content.querySelector('.map__pin');
 var cadrTemplate = document.querySelector('#pin__template').content.querySelector('.map__card');
 var ads = [];
@@ -75,9 +75,9 @@ var getRandomNumber = function (min, max) {
 var shuffleArray = function (array) {
   for (var i = array.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
-    var temp = array[i];
+    var swap = array[i];
     array[i] = array[j];
-    array[j] = temp;
+    array[j] = swap;
   }
   return array;
 };
@@ -102,23 +102,23 @@ var getRandomLengthArray = function (array) {
 };
 
 // Создание массива индексов, перетасованных в случайном порядке
-var getArrayOfRandomIndex = function (array) {
-  var arrayOfIndex = getArray(0, array.length - 1);
-  return shuffleArray(arrayOfIndex);
+var getRandomIndexArray = function (array) {
+  var randomIndexArray = getArray(0, array.length - 1);
+  return shuffleArray(randomIndexArray);
 };
 
 // Массив со случайными индексами массива заголовков предолжения
-var allTitleNumbersIndex = getArrayOfRandomIndex(ALL_AD_TITLE);
+var adTitlesRandomIndexes = getRandomIndexArray(AD_TITLES);
 // Массив с номерами аватаров
-var allAvatarNumbers = getArray(NUMBER_OF_AVATAR_MIN, NUMBER_OF_AVATAR_MAX);
+var avatarsIndexes = getArray(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
 // Массив со случайными индексами массива аватаров
-var allAvatarNumbersIndex = getArrayOfRandomIndex(allAvatarNumbers);
+var avatarsRandomIndexes = getRandomIndexArray(avatarsIndexes);
 
 // Генерация адреса аватара
 var createAvatarAddress = function (i) {
   var avatarPath = 'img/avatars/user';
   var avatarFormat = '.png';
-  var avatarNumber = allAvatarNumbers[allAvatarNumbersIndex[i]];
+  var avatarNumber = avatarsIndexes[avatarsRandomIndexes[i]];
   // Если изображений станет больше 9, то 0 не нужен
   if (avatarNumber < 10) {
     avatarNumber = '0' + avatarNumber;
@@ -129,7 +129,7 @@ var createAvatarAddress = function (i) {
 // Генерация массива с объявлениями
 var initAds = function () {
   var newAds = [];
-  for (var i = 0; i < NUMBER_OF_AD; i++) {
+  for (var i = 0; i < AD_NUMBER; i++) {
     var locationX = getRandomNumber(COODRINATE_X_MIN, COODRINATE_X_MAX);
     var locationY = getRandomNumber(COODRINATE_Y_MIN, COODRINATE_Y_MAX);
     var randomAd = {
@@ -137,17 +137,17 @@ var initAds = function () {
         avatar: createAvatarAddress(i)
       },
       offer: {
-        title: ALL_AD_TITLE[allTitleNumbersIndex[i]],
+        title: AD_TITLES[adTitlesRandomIndexes[i]],
         address: locationX + ', ' + locationY,
         price: getRandomNumber(PRICE_MIN, PRICE_MAX),
-        type: ALL_TYPE_HOUSING[getRandomNumber(0, ALL_TYPE_HOUSING.length - 1)],
+        type: HOUSING_TYPES[getRandomNumber(0, HOUSING_TYPES.length - 1)],
         rooms: getRandomNumber(ROOM_MIN, ROOM_MAX),
         guests: getRandomNumber(GUESTS_MIN, GUESTS_MAX),
-        checkin: ALL_CHEKIN_TIME[getRandomNumber(0, ALL_CHEKIN_TIME.length - 1)],
-        checkout: ALL_CHEKOUT_TIME[getRandomNumber(0, ALL_CHEKOUT_TIME.length - 1)],
-        features: getRandomLengthArray(ALL_FEATURES_HOUSING),
+        checkin: CHEKIN_TIMES[getRandomNumber(0, CHEKIN_TIMES.length - 1)],
+        checkout: CHEKOUT_TIMES[getRandomNumber(0, CHEKOUT_TIMES.length - 1)],
+        features: getRandomLengthArray(HOUSING_FEATURES),
         description: '',
-        photos: shuffleArray(ALL_PHOTOS_HOUSING)
+        photos: shuffleArray(HOUSING_PHOTOS)
       },
       location: {
         x: locationX,
@@ -160,7 +160,7 @@ var initAds = function () {
 };
 
 // Создание DOM-элемента метки на карте
-var renderPin = function (pin) {
+var initPinElement = function (pin) {
   var pinElement = pinTemplate.cloneNode(true);
   var pinAvatar = pinTemplate.querySelector('img');
   pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
@@ -174,8 +174,8 @@ var renderPin = function (pin) {
 var fillMap = function () {
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < ads.length; i++) {
-    fragment.appendChild(renderPin(ads[i]));
-    mapWithPins.appendChild(fragment);
+    fragment.appendChild(initPinElement(ads[i]));
+    pinsLocation.appendChild(fragment);
   }
 };
 
@@ -188,16 +188,16 @@ var init = function () {
 init();
 
 // Удаление потомков
-var deleteChild = function (parent) {
+var deleteChildElement = function (parent) {
   while (parent.firstChild) {
     parent.removeChild(parent.firstChild);
   }
 };
 
 // Заполнение списка преимуществ DOM-элементами
-var renderFeaturesBlock = function (features) {
+var fillFeaturesList = function (features) {
   var featuresList = cadrTemplate.querySelector('.popup__features');
-  deleteChild(featuresList);
+  deleteChildElement(featuresList);
   var fragment = document.createDocumentFragment();
   for (var i = 0; i < features.length; i++) {
     var featuresItem = document.createElement('li');
@@ -208,25 +208,25 @@ var renderFeaturesBlock = function (features) {
   return featuresList.appendChild(fragment);
 };
 
-var renderAdPopup = function (ad) {
-  var adPopup = cadrTemplate.cloneNode(true);
-  adPopup.querySelector('.popup__title').textContent = ad.offer.title;
-  adPopup.querySelector('.popup__text--address').textContent = ad.offer.address;
-  adPopup.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-  adPopup.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ads[1].offer.guests + ' гостей';
-  adPopup.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
-  adPopup.querySelector('.popup__description').textContent = ad.offer.description;
-  adPopup.querySelector('.popup__avatar').src = ad.author.avatar;
-  return adPopup;
+var initAdPopupElement = function (ad) {
+  var adPopupElement = cadrTemplate.cloneNode(true);
+  adPopupElement.querySelector('.popup__title').textContent = ad.offer.title;
+  adPopupElement.querySelector('.popup__text--address').textContent = ad.offer.address;
+  adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
+  adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ads[1].offer.guests + ' гостей';
+  adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
+  adPopupElement.querySelector('.popup__description').textContent = ad.offer.description;
+  adPopupElement.querySelector('.popup__avatar').src = ad.author.avatar;
+  return adPopupElement;
 };
 
-renderFeaturesBlock(ads[1].offer.features);
+fillFeaturesList(ads[0].offer.features);
 
 map.querySelector('.map__filters-container');
-var renderAd = function () {
+var renderAdPopup = function () {
   var fragment = document.createDocumentFragment();
-  fragment.appendChild(renderAdPopup(ads[1]));
+  fragment.appendChild(initAdPopupElement(ads[0]));
   map.insertBefore(fragment, map.querySelector('.map__filters-container'));
 };
 
-renderAd();
+renderAdPopup();
