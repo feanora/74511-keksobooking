@@ -64,6 +64,7 @@ var cadrTemplateElement = document.querySelector('#pin__template').content.query
 var mapFiltersContainerElement = mapElement.querySelector('.map__filters-container');
 var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
 var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
+var typeElement = cadrTemplateElement.querySelector('.popup__type');
 var ads = [];
 
 // Имитация активного режима
@@ -192,6 +193,19 @@ var deleteChildElement = function (parent) {
   return parent;
 };
 
+// Вывод типа жилья
+var identifyHousingType = function (ad) {
+  if (ad.offer.type === 'flat') {
+    typeElement.textContent = 'Квартира';
+  } else if (ad.offer.type === 'bungalo') {
+    typeElement.textContent = 'Бунгало';
+  } else if (ad.offer.type === 'house') {
+    typeElement.textContent = 'Дом';
+  } else {
+    typeElement.textContent = 'Дворец';
+  }
+};
+
 // Заполнение родительского элемента дочерними
 var fillParentElement = function (items, tag, Classname, parentElement) {
   var fragment = document.createDocumentFragment();
@@ -237,6 +251,7 @@ var initAdPopupElement = function (ad) {
 };
 
 var renderAdPopapElement = function (ad) {
+  identifyHousingType(ad);
   fillFeaturesListElement(ad, ad.offer.features);
   fillPhotosListElement(ad, ad.offer.photos);
   mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
