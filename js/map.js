@@ -58,6 +58,9 @@ var PHOTO_WIDTH = 45; // из css
 var PHOTO_HEIGHT = 40; // из css
 
 var mapElement = document.querySelector('.map');
+var adTitlesRandomIndexes = [];
+var avatarsIndexes = [];
+var avatarsRandomIndexes = [];
 var pinsLocationElement = document.querySelector('.map__pins');
 var pinTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__pin');
 var cadrTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__card');
@@ -113,12 +116,20 @@ var getRandomIndexArray = function (array) {
   return shuffleArray(randomIndexArray);
 };
 
-// Массив со случайными индексами массива заголовков предолжения
-var adTitlesRandomIndexes = getRandomIndexArray(AD_TITLES);
-// Массив с номерами аватаров
-var avatarsIndexes = getArray(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
-// Массив со случайными индексами массива аватаров
-var avatarsRandomIndexes = getRandomIndexArray(avatarsIndexes);
+// Создание массива со случайными индексами массива заголовков предолжения
+var getAdTitlesRandomIndexes = function (array) {
+  return getRandomIndexArray(array);
+};
+
+// Создание массива с номерами аватаров
+var getAvatarsIndexes = function (avatarNumberMin, avatarNumberMax) {
+  return getArray(avatarNumberMin, avatarNumberMax);
+};
+
+// Создание массива со случайными индексами массива аватаров
+var getAvatarsRandomIndexes = function () {
+  return getRandomIndexArray(avatarsIndexes);
+};
 
 // Генерация адреса аватара
 var createAvatarAddress = function (i) {
@@ -168,7 +179,7 @@ var initAds = function () {
 // Создание DOM-элемента метки на карте
 var initPinElement = function (pin) {
   var pinElement = pinTemplateElement.cloneNode(true);
-  var pinAvatarElement = pinTemplateElement.querySelector('img');
+  var pinAvatarElement = pinElement.querySelector('img');
   pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
   pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
   pinAvatarElement.src = pin.author.avatar;
@@ -260,6 +271,9 @@ var renderAdPopapElement = function (ad) {
 // Точка входа в программу
 var init = function () {
   simulateDynamicMode();
+  avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
+  avatarsRandomIndexes = getAvatarsRandomIndexes();
+  adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
   ads = initAds();
   fillMap();
   renderAdPopapElement(ads[1]);
