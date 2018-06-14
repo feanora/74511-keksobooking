@@ -269,7 +269,7 @@ var renderAdPopapElement = function (ad) {
 };
 
 // Точка входа в программу
-var init = function () {
+/* var init = function () {
   simulateDynamicMode();
   avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
   avatarsRandomIndexes = getAvatarsRandomIndexes();
@@ -279,4 +279,36 @@ var init = function () {
   renderAdPopapElement(ads[1]);
 };
 
-init();
+init(); */
+
+var formElement = document.querySelector('.ad-form');
+var fieldsetElements = formElement.querySelectorAll('fieldset');
+var mainPinElement = document.querySelector('.map__pin--main');
+
+// Добавление/удаление у полей формы атрибута disabled
+var deactivateField = function (value) {
+  for (var i = 0; i < fieldsetElements.length; i++) {
+    fieldsetElements[i].disabled = value;
+  }
+};
+
+// Переключение в неактивный режим
+var switchToInertMode = function () {
+  mapElement.classList.add('map--faded');
+  formElement.classList.add('ad-form--disabled');
+  deactivateField(true);
+};
+
+switchToInertMode();
+
+// Переключение в активный режим
+var switchToDynamicMode = function () {
+  mapElement.classList.remove('map--faded');
+  formElement.classList.remove('ad-form--disabled');
+  deactivateField(false);
+};
+
+// Эмуляция перемещения метки
+mainPinElement.addEventListener('mouseup', function () {
+  switchToDynamicMode();
+});
