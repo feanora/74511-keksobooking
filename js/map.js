@@ -54,6 +54,9 @@ var GUESTS_MIN = 1;
 var GUESTS_MAX = 20;
 var PIN_WIDTH = 50; // из css
 var PIN_HEIGHT = 70; // из css
+var MAIN_PIN_WIDTH = 65; // из css
+var MAIN_PIN_HEIGHT = 65; // из css
+var MAIN_PIN_SHANK = 22; // из css
 var PHOTO_WIDTH = 45; // из css
 var PHOTO_HEIGHT = 40; // из css
 
@@ -284,6 +287,8 @@ init(); */
 var formElement = document.querySelector('.ad-form');
 var fieldsetElements = formElement.querySelectorAll('fieldset');
 var mainPinElement = document.querySelector('.map__pin--main');
+var addressFieldElement = formElement.querySelector('#address');
+var isDynamicMode = true;
 
 // Добавление/удаление у полей формы атрибута disabled
 var deactivateField = function (value) {
@@ -297,6 +302,7 @@ var switchToInertMode = function () {
   mapElement.classList.add('map--faded');
   formElement.classList.add('ad-form--disabled');
   deactivateField(true);
+  isDynamicMode = false;
 };
 
 switchToInertMode();
@@ -306,9 +312,24 @@ var switchToDynamicMode = function () {
   mapElement.classList.remove('map--faded');
   formElement.classList.remove('ad-form--disabled');
   deactivateField(false);
+  isDynamicMode = true;
 };
+
+// Заполнение поля адреса
+var showAddress = function () {
+  var mainPinX = parseInt(mainPinElement.style.left, 10) + MAIN_PIN_WIDTH / 2;
+  var mainPinY = parseInt(mainPinElement.style.top, 10) + MAIN_PIN_HEIGHT / 2;
+  if (isDynamicMode) {
+    mainPinY = parseInt(mainPinElement.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
+  }
+  addressFieldElement.value = mainPinX + ', ' + mainPinY;
+  return addressFieldElement.value;
+};
+
+showAddress();
 
 // Эмуляция перемещения метки
 mainPinElement.addEventListener('mouseup', function () {
   switchToDynamicMode();
+  showAddress();
 });
