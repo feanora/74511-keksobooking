@@ -73,11 +73,6 @@ var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
 var typeElement = cadrTemplateElement.querySelector('.popup__type');
 var ads = [];
 
-// Имитация активного режима
-var simulateDynamicMode = function () {
-  mapElement.classList.remove('map--faded');
-};
-
 // Генерация случайного числа от min до max
 var getRandomNumber = function (min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -257,7 +252,7 @@ var initAdPopupElement = function (ad) {
   adPopupElement.querySelector('.popup__title').textContent = ad.offer.title;
   adPopupElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-  adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ads[1].offer.guests + ' гостей';
+  adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
   adPopupElement.querySelector('.popup__description').textContent = ad.offer.description;
   adPopupElement.querySelector('.popup__avatar').src = ad.author.avatar;
@@ -305,8 +300,6 @@ var switchToInertMode = function () {
   isDynamicMode = false;
 };
 
-switchToInertMode();
-
 // Переключение в активный режим
 var switchToDynamicMode = function () {
   mapElement.classList.remove('map--faded');
@@ -331,10 +324,28 @@ var showAddress = function () {
   return addressFieldElement.value;
 };
 
-showAddress();
-
 // Эмуляция перемещения метки
 mainPinElement.addEventListener('mouseup', function () {
   switchToDynamicMode();
   showAddress();
+  fillMap();
 });
+
+// Точка входа в программу
+var init = function () {
+  avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
+  avatarsRandomIndexes = getAvatarsRandomIndexes();
+  adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
+  ads = initAds();
+  switchToInertMode();
+  showAddress();
+};
+
+init();
+// Неудачная попытка добавить обработчики на метки
+var pinElements = pinsLocationElement.querySelectorAll('.map__pin:not(.map__pin--main)');
+for (var i = 0; i < pinElements.length; i++) {
+  pinElements[i].addEventListener('click', function () {
+    renderAdPopapElement(ads[i]);
+  });
+}
