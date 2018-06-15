@@ -315,12 +315,17 @@ var switchToDynamicMode = function () {
   isDynamicMode = true;
 };
 
+// Перевод в десятичное число
+var convertToNumber = function (string) {
+  return parseInt(string, 10);
+};
+
 // Заполнение поля адреса
 var showAddress = function () {
-  var mainPinX = parseInt(mainPinElement.style.left, 10) + MAIN_PIN_WIDTH / 2;
-  var mainPinY = parseInt(mainPinElement.style.top, 10) + MAIN_PIN_HEIGHT / 2;
+  var mainPinX = convertToNumber(mainPinElement.style.left) + MAIN_PIN_WIDTH / 2;
+  var mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT / 2;
   if (isDynamicMode) {
-    mainPinY = parseInt(mainPinElement.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
+    mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
   }
   addressFieldElement.value = mainPinX + ', ' + mainPinY;
   return addressFieldElement.value;
