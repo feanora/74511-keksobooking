@@ -54,8 +54,12 @@ var GUESTS_MIN = 1;
 var GUESTS_MAX = 20;
 var PIN_WIDTH = 50; // из css
 var PIN_HEIGHT = 70; // из css
+var MAIN_PIN_WIDTH = 65; // из css
+var MAIN_PIN_HEIGHT = 65; // из css
+var MAIN_PIN_SHANK = 22; // из css
 var PHOTO_WIDTH = 45; // из css
 var PHOTO_HEIGHT = 40; // из css
+var ESC_KEYCODE = 27;
 
 var mapElement = document.querySelector('.map');
 var adTitlesRandomIndexes = [];
@@ -69,11 +73,6 @@ var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
 var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
 var typeElement = cadrTemplateElement.querySelector('.popup__type');
 var ads = [];
-
-// Имитация активного режима
-var simulateDynamicMode = function () {
-  mapElement.classList.remove('map--faded');
-};
 
 // Генерация случайного числа от min до max
 var getRandomNumber = function (min, max) {
@@ -184,6 +183,9 @@ var initPinElement = function (pin) {
   pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
   pinAvatarElement.src = pin.author.avatar;
   pinAvatarElement.alt = pin.offer.title;
+  pinElement.addEventListener('click', function () {
+    renderAdPopapElement(pin);
+  });
   return pinElement;
 };
 
@@ -237,6 +239,7 @@ var fillFeaturesListElement = function (ad, features) {
     featuresListElement.children[i].classList.add(newFeaturesClass);
   }
 };
+
 // Заполнение списка фотографий
 var fillPhotosListElement = function (ad, photos) {
   deleteChildElement(photosListElement);
@@ -254,29 +257,107 @@ var initAdPopupElement = function (ad) {
   adPopupElement.querySelector('.popup__title').textContent = ad.offer.title;
   adPopupElement.querySelector('.popup__text--address').textContent = ad.offer.address;
   adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
-  adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ads[1].offer.guests + ' гостей';
+  adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
   adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
   adPopupElement.querySelector('.popup__description').textContent = ad.offer.description;
   adPopupElement.querySelector('.popup__avatar').src = ad.author.avatar;
+  var popupCloseElement = adPopupElement.querySelector('.popup__close');
+  popupCloseElement.addEventListener('click', function () {
+    closePopup();
+  });
+  document.addEventListener('keydown', popupEscPressHandler);
   return adPopupElement;
 };
 
+// Отрисовка попапа
 var renderAdPopapElement = function (ad) {
   identifyHousingType(ad);
   fillFeaturesListElement(ad, ad.offer.features);
   fillPhotosListElement(ad, ad.offer.photos);
+  var popupElement = mapElement.querySelector('.map__card');
+  if (popupElement) {
+    closePopup();
+  }
   mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
+};
+
+var formElement = document.querySelector('.ad-form');
+var fieldsetElements = formElement.querySelectorAll('fieldset');
+var mainPinElement = document.querySelector('.map__pin--main');
+var addressFieldElement = formElement.querySelector('#address');
+var isDynamicMode = true;
+
+// Добавление/удаление у полей формы атрибута disabled
+var toggleDisabledFields = function (value) {
+  for (var i = 0; i < fieldsetElements.length; i++) {
+    fieldsetElements[i].disabled = value;
+  }
+};
+
+// Переключение в неактивный режим
+var switchToInertMode = function () {
+  mapElement.classList.add('map--faded');
+  formElement.classList.add('ad-form--disabled');
+  toggleDisabledFields(true);
+  isDynamicMode = false;
+};
+
+// Переключение в активный режим
+var switchToDynamicMode = function () {
+  mapElement.classList.remove('map--faded');
+  formElement.classList.remove('ad-form--disabled');
+  toggleDisabledFields(false);
+  isDynamicMode = true;
+};
+
+// Перевод в десятичное число
+var convertToNumber = function (string) {
+  return parseInt(string, 10);
+};
+
+// Заполнение поля адреса
+var showAddress = function () {
+  var mainPinX = convertToNumber(mainPinElement.style.left) + MAIN_PIN_WIDTH / 2;
+  var mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT / 2;
+  if (isDynamicMode) {
+    mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
+  }
+  addressFieldElement.value = mainPinX + ', ' + mainPinY;
+  return addressFieldElement.value;
+};
+
+// Эмуляция перемещения метки
+var mainPinElementClickHandler = function () {
+  switchToDynamicMode();
+  showAddress();
+  fillMap();
+  mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
+};
+
+mainPinElement.addEventListener('mouseup', mainPinElementClickHandler);
+
+// Закрытие попапа с объявлением
+var closePopup = function () {
+  var popupElement = mapElement.querySelector('.map__card');
+  mapElement.removeChild(popupElement);
+  document.removeEventListener('keydown', popupEscPressHandler);
+};
+
+// Закрытие попапа по нажатию на esc
+var popupEscPressHandler = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
 };
 
 // Точка входа в программу
 var init = function () {
-  simulateDynamicMode();
+  switchToInertMode();
+  showAddress();
   avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
   avatarsRandomIndexes = getAvatarsRandomIndexes();
   adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
   ads = initAds();
-  fillMap();
-  renderAdPopapElement(ads[1]);
 };
 
 init();
