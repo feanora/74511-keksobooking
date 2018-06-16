@@ -330,10 +330,6 @@ var showAddress = function () {
 var mainPinElementClickHandler = function () {
   switchToDynamicMode();
   showAddress();
-  avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
-  avatarsRandomIndexes = getAvatarsRandomIndexes();
-  adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
-  ads = initAds();
   fillMap();
   mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
 };
@@ -358,6 +354,10 @@ var popupEscPressHandler = function (evt) {
 var init = function () {
   switchToInertMode();
   showAddress();
+  avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
+  avatarsRandomIndexes = getAvatarsRandomIndexes();
+  adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
+  ads = initAds();
 };
 
 init();
