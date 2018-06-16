@@ -59,6 +59,7 @@ var MAIN_PIN_HEIGHT = 65; // из css
 var MAIN_PIN_SHANK = 22; // из css
 var PHOTO_WIDTH = 45; // из css
 var PHOTO_HEIGHT = 40; // из css
+var ESC_KEYCODE = 27;
 
 var mapElement = document.querySelector('.map');
 var adTitlesRandomIndexes = [];
@@ -182,6 +183,9 @@ var initPinElement = function (pin) {
   pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
   pinAvatarElement.src = pin.author.avatar;
   pinAvatarElement.alt = pin.offer.title;
+  pinElement.addEventListener('click', function () {
+    renderAdPopapElement(pin);
+  });
   return pinElement;
 };
 
@@ -235,6 +239,7 @@ var fillFeaturesListElement = function (ad, features) {
     featuresListElement.children[i].classList.add(newFeaturesClass);
   }
 };
+
 // Заполнение списка фотографий
 var fillPhotosListElement = function (ad, photos) {
   deleteChildElement(photosListElement);
@@ -256,28 +261,25 @@ var initAdPopupElement = function (ad) {
   adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
   adPopupElement.querySelector('.popup__description').textContent = ad.offer.description;
   adPopupElement.querySelector('.popup__avatar').src = ad.author.avatar;
+  var popupCloseElement = adPopupElement.querySelector('.popup__close');
+  popupCloseElement.addEventListener('click', function () {
+    closePopup();
+  });
+  document.addEventListener('keydown', popupEscPressHandler);
   return adPopupElement;
 };
 
+// Отрисовка попапа
 var renderAdPopapElement = function (ad) {
   identifyHousingType(ad);
   fillFeaturesListElement(ad, ad.offer.features);
   fillPhotosListElement(ad, ad.offer.photos);
+  var popupElement = mapElement.querySelector('.map__card');
+  if (popupElement) {
+    closePopup();
+  }
   mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
 };
-
-// Точка входа в программу
-/* var init = function () {
-  simulateDynamicMode();
-  avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
-  avatarsRandomIndexes = getAvatarsRandomIndexes();
-  adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
-  ads = initAds();
-  fillMap();
-  renderAdPopapElement(ads[1]);
-};
-
-init(); */
 
 var formElement = document.querySelector('.ad-form');
 var fieldsetElements = formElement.querySelectorAll('fieldset');
@@ -286,7 +288,7 @@ var addressFieldElement = formElement.querySelector('#address');
 var isDynamicMode = true;
 
 // Добавление/удаление у полей формы атрибута disabled
-var deactivateField = function (value) {
+var toggleDisabledFields = function (value) {
   for (var i = 0; i < fieldsetElements.length; i++) {
     fieldsetElements[i].disabled = value;
   }
@@ -296,7 +298,7 @@ var deactivateField = function (value) {
 var switchToInertMode = function () {
   mapElement.classList.add('map--faded');
   formElement.classList.add('ad-form--disabled');
-  deactivateField(true);
+  toggleDisabledFields(true);
   isDynamicMode = false;
 };
 
@@ -304,7 +306,7 @@ var switchToInertMode = function () {
 var switchToDynamicMode = function () {
   mapElement.classList.remove('map--faded');
   formElement.classList.remove('ad-form--disabled');
-  deactivateField(false);
+  toggleDisabledFields(false);
   isDynamicMode = true;
 };
 
@@ -325,27 +327,37 @@ var showAddress = function () {
 };
 
 // Эмуляция перемещения метки
-mainPinElement.addEventListener('mouseup', function () {
+var mainPinElementClickHandler = function () {
   switchToDynamicMode();
   showAddress();
-  fillMap();
-});
-
-// Точка входа в программу
-var init = function () {
   avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
   avatarsRandomIndexes = getAvatarsRandomIndexes();
   adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
   ads = initAds();
+  fillMap();
+  mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
+};
+
+mainPinElement.addEventListener('mouseup', mainPinElementClickHandler);
+
+// Закрытие попапа с объявлением
+var closePopup = function () {
+  var popupElement = mapElement.querySelector('.map__card');
+  mapElement.removeChild(popupElement);
+  document.removeEventListener('keydown', popupEscPressHandler);
+};
+
+// Закрытие попапа по нажатию на esc
+var popupEscPressHandler = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closePopup();
+  }
+};
+
+// Точка входа в программу
+var init = function () {
   switchToInertMode();
   showAddress();
 };
 
 init();
-// Неудачная попытка добавить обработчики на метки
-var pinElements = pinsLocationElement.querySelectorAll('.map__pin:not(.map__pin--main)');
-for (var i = 0; i < pinElements.length; i++) {
-  pinElements[i].addEventListener('click', function () {
-    renderAdPopapElement(ads[i]);
-  });
-}
