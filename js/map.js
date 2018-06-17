@@ -459,6 +459,7 @@ var clearMap = function () {
 
 resetElement.addEventListener('click', function () {
   switchToInertMode();
+  showAddress();
   clearMap();
   closePopup();
   formElement.reset();
