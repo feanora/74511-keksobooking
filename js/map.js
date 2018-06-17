@@ -461,7 +461,10 @@ resetElement.addEventListener('click', function () {
   switchToInertMode();
   showAddress();
   clearMap();
-  closePopup();
+  var popupElement = mapElement.querySelector('.map__card');
+  if (popupElement) {
+    closePopup();
+  }
   formElement.reset();
 });
 
