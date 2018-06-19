@@ -285,7 +285,6 @@ var formElement = document.querySelector('.ad-form');
 var fieldsetElements = formElement.querySelectorAll('fieldset');
 var mainPinElement = document.querySelector('.map__pin--main');
 var addressFieldElement = formElement.querySelector('#address');
-var isDynamicMode = true;
 
 // Добавление/удаление у полей формы атрибута disabled
 var toggleDisabledFields = function (value) {
@@ -299,7 +298,6 @@ var switchToInertMode = function () {
   mapElement.classList.add('map--faded');
   formElement.classList.add('ad-form--disabled');
   toggleDisabledFields(true);
-  isDynamicMode = false;
 };
 
 // Переключение в активный режим
@@ -307,7 +305,6 @@ var switchToDynamicMode = function () {
   mapElement.classList.remove('map--faded');
   formElement.classList.remove('ad-form--disabled');
   toggleDisabledFields(false);
-  isDynamicMode = true;
 };
 
 // Перевод в десятичное число
@@ -318,10 +315,7 @@ var convertToNumber = function (string) {
 // Заполнение поля адреса
 var showAddress = function () {
   var mainPinX = convertToNumber(mainPinElement.style.left) + MAIN_PIN_WIDTH / 2;
-  var mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT / 2;
-  if (isDynamicMode) {
-    mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
-  }
+  var mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
   addressFieldElement.value = mainPinX + ', ' + mainPinY;
   return addressFieldElement.value;
 };
