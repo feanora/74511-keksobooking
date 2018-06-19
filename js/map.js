@@ -326,7 +326,37 @@ var showAddress = function () {
   return addressFieldElement.value;
 };
 
-// Эмуляция перемещения метки
+mainPinElement.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  var mouseMoveHandler = function (moveEvt) {
+    moveEvt.preventDefault();
+    // dragged = true;
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+    startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    mainPinElement.style.top = (mainPinElement.offsetTop - shift.y) + 'px';
+    mainPinElement.style.left = (mainPinElement.offsetLeft - shift.x) + 'px';
+    showAddress();
+  };
+  var mouseUpHandler = function (upEvt) {
+    upEvt.preventDefault();
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+  };
+  document.addEventListener('mousemove', mouseMoveHandler);
+  document.addEventListener('mouseup', mouseUpHandler);
+});
+
+// Обработчик клика на метку (без перемещения)
 var mainPinElementClickHandler = function () {
   switchToDynamicMode();
   showAddress();
