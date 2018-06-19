@@ -326,6 +326,42 @@ var showAddress = function () {
   return addressFieldElement.value;
 };
 
+var X_MIN = 0;
+var X_MAX = 1200;
+var Y_MIN = 130;
+var Y_MAX = 630;
+var minCoord = {
+  x: X_MIN,
+  y: Y_MIN - MAIN_PIN_HEIGHT - MAIN_PIN_SHANK
+};
+var maxCoord = {
+  x: X_MAX - MAIN_PIN_WIDTH,
+  y: Y_MAX - MAIN_PIN_HEIGHT - MAIN_PIN_SHANK
+};
+var calculatePinPositionTop = function (shift) {
+  var pinPositionTop = mainPinElement.offsetTop - shift;
+  if (pinPositionTop <= minCoord.y) {
+    pinPositionTop = minCoord.y;
+  } else if (pinPositionTop >= maxCoord.y) {
+    pinPositionTop = maxCoord.y;
+  } else {
+    pinPositionTop = pinPositionTop;
+  }
+  return pinPositionTop;
+};
+
+var calculatePinPositionLeft = function (shift) {
+  var pinPositionLeft = mainPinElement.offsetLeft - shift;
+  if (pinPositionLeft <= minCoord.x) {
+    pinPositionLeft = minCoord.x;
+  } else if (pinPositionLeft >= maxCoord.x) {
+    pinPositionLeft = maxCoord.x;
+  } else {
+    pinPositionLeft = pinPositionLeft;
+  }
+  return pinPositionLeft;
+};
+
 mainPinElement.addEventListener('mousedown', function (evt) {
   evt.preventDefault();
   var startCoords = {
@@ -343,8 +379,9 @@ mainPinElement.addEventListener('mousedown', function (evt) {
       x: moveEvt.clientX,
       y: moveEvt.clientY
     };
-    mainPinElement.style.top = (mainPinElement.offsetTop - shift.y) + 'px';
-    mainPinElement.style.left = (mainPinElement.offsetLeft - shift.x) + 'px';
+    // mainPinElement.style.top = (mainPinElement.offsetTop - shift.y) + 'px';
+    mainPinElement.style.top = calculatePinPositionTop(shift.y) + 'px';
+    mainPinElement.style.left = calculatePinPositionLeft(shift.x) + 'px';
     showAddress();
   };
   var mouseUpHandler = function (upEvt) {
