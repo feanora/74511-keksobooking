@@ -60,6 +60,10 @@ var MAIN_PIN_SHANK = 22; // из css
 var PHOTO_WIDTH = 45; // из css
 var PHOTO_HEIGHT = 40; // из css
 var ESC_KEYCODE = 27;
+var X_MIN = 0;
+var X_MAX = 1200;
+var Y_MIN = 130;
+var Y_MAX = 630;
 
 var mapElement = document.querySelector('.map');
 var adTitlesRandomIndexes = [];
@@ -320,10 +324,6 @@ var showAddress = function () {
   return addressFieldElement.value;
 };
 
-var X_MIN = 0;
-var X_MAX = 1200;
-var Y_MIN = 130;
-var Y_MAX = 630;
 var minCoord = {
   x: X_MIN,
   y: Y_MIN - MAIN_PIN_HEIGHT - MAIN_PIN_SHANK
@@ -332,31 +332,22 @@ var maxCoord = {
   x: X_MAX - MAIN_PIN_WIDTH,
   y: Y_MAX - MAIN_PIN_HEIGHT - MAIN_PIN_SHANK
 };
-var calculatePinPositionTop = function (shift) {
-  var pinPositionTop = mainPinElement.offsetTop - shift;
-  if (pinPositionTop <= minCoord.y) {
-    pinPositionTop = minCoord.y;
-  } else if (pinPositionTop >= maxCoord.y) {
-    pinPositionTop = maxCoord.y;
+
+// Расчет положения метки
+var calculatePinPosition = function (offset, shift, min, max) {
+  var pinPosition = offset - shift;
+  if (pinPosition <= min) {
+    pinPosition = min;
+  } else if (pinPosition >= max) {
+    pinPosition = max;
   } else {
-    pinPositionTop = pinPositionTop;
+    pinPosition = pinPosition;
   }
-  return pinPositionTop;
+  return pinPosition;
 };
 
-var calculatePinPositionLeft = function (shift) {
-  var pinPositionLeft = mainPinElement.offsetLeft - shift;
-  if (pinPositionLeft <= minCoord.x) {
-    pinPositionLeft = minCoord.x;
-  } else if (pinPositionLeft >= maxCoord.x) {
-    pinPositionLeft = maxCoord.x;
-  } else {
-    pinPositionLeft = pinPositionLeft;
-  }
-  return pinPositionLeft;
-};
-
-mainPinElement.addEventListener('mousedown', function (evt) {
+// Обработчик нажатия на метку с перетаскиванием
+var mouseDownHandler = function (evt) {
   evt.preventDefault();
   var startCoords = {
     x: evt.clientX,
@@ -364,7 +355,6 @@ mainPinElement.addEventListener('mousedown', function (evt) {
   };
   var mouseMoveHandler = function (moveEvt) {
     moveEvt.preventDefault();
-    // dragged = true;
     var shift = {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
@@ -373,9 +363,8 @@ mainPinElement.addEventListener('mousedown', function (evt) {
       x: moveEvt.clientX,
       y: moveEvt.clientY
     };
-    // mainPinElement.style.top = (mainPinElement.offsetTop - shift.y) + 'px';
-    mainPinElement.style.top = calculatePinPositionTop(shift.y) + 'px';
-    mainPinElement.style.left = calculatePinPositionLeft(shift.x) + 'px';
+    mainPinElement.style.top = calculatePinPosition(mainPinElement.offsetTop, shift.y, minCoord.y, maxCoord.y) + 'px';
+    mainPinElement.style.left = calculatePinPosition(mainPinElement.offsetLeft, shift.x, minCoord.x, maxCoord.x) + 'px';
     showAddress();
   };
   var mouseUpHandler = function (upEvt) {
@@ -385,7 +374,7 @@ mainPinElement.addEventListener('mousedown', function (evt) {
   };
   document.addEventListener('mousemove', mouseMoveHandler);
   document.addEventListener('mouseup', mouseUpHandler);
-});
+};
 
 // Обработчик клика на метку (без перемещения)
 var mainPinElementClickHandler = function () {
@@ -395,6 +384,7 @@ var mainPinElementClickHandler = function () {
   mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
 };
 
+mainPinElement.addEventListener('mousedown', mouseDownHandler);
 mainPinElement.addEventListener('mouseup', mainPinElementClickHandler);
 
 // Закрытие попапа с объявлением
