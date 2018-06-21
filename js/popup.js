@@ -9,6 +9,7 @@
   var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
   var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
   var typeElement = cadrTemplateElement.querySelector('.popup__type');
+
   // Удаление потомков
   var deleteChildElement = function (parent) {
     while (parent.firstChild) {

@@ -1,6 +1,25 @@
 'use strict';
 
 (function () {
+  var PRICE_DEPENDENCIES = {
+    'bungalo': {
+      price: '0',
+      placeholder: '0'
+    },
+    'flat': {
+      price: '1000',
+      placeholder: '1000'
+    },
+    'house': {
+      price: '5000',
+      placeholder: '5000'
+    },
+    'palace': {
+      price: '10000',
+      placeholder: '10000'
+    }
+  };
+
   var mapElement = window.util.mapElement;
   var formElement = window.util.formElement;
   var mainPinElement = window.util.mainPinElement;
@@ -17,12 +36,11 @@
   var fieldInvalidHandler = function (evt) {
     var target = evt.target;
     target.classList.add('invalid');
-    checkValidity();
+    checkValidity(target);
   };
 
   // Проверка, валидно ли поле. Если да, то убирает рамку
-  var checkValidity = function () {
-    var checkedField = formElement.querySelector('.invalid');
+  var checkValidity = function (checkedField) {
     if (checkedField.validity.valid) {
       checkedField.classList.remove('invalid');
     }
@@ -30,19 +48,8 @@
 
   // Изменение значения минимальной цены и плейсхолдера в зависимости от типа жилья
   var changePriceValue = function () {
-    if (selectTypeElement.value === 'bungalo') {
-      priceElement.min = '0';
-      priceElement.placeholder = '0';
-    } else if (selectTypeElement.value === 'flat') {
-      priceElement.min = '1000';
-      priceElement.placeholder = '1000';
-    } else if (selectTypeElement.value === 'house') {
-      priceElement.min = '5000';
-      priceElement.placeholder = '5000';
-    } else {
-      priceElement.min = '10000';
-      priceElement.placeholder = '10000';
-    }
+    priceElement.min = PRICE_DEPENDENCIES[selectTypeElement.value].price;
+    priceElement.placeholder = PRICE_DEPENDENCIES[selectTypeElement.value].placeholder;
   };
 
   // Синхронизация количества комнат и количества гостей
@@ -62,12 +69,12 @@
 
   guestNumberElement.addEventListener('change', function () {
     synchronizeRoomsAndGuests();
-    checkValidity();
+    checkValidity(guestNumberElement);
   });
 
   roomNumberElement.addEventListener('change', function () {
     synchronizeRoomsAndGuests();
-    checkValidity();
+    checkValidity(roomNumberElement);
   });
 
   // Синхронизация времени заезда и выезда
@@ -80,16 +87,16 @@
   };
 
   titleElement.addEventListener('change', function () {
-    checkValidity();
+    checkValidity(titleElement);
   });
 
   selectTypeElement.addEventListener('change', function () {
     changePriceValue();
-    checkValidity();
+    checkValidity(selectTypeElement);
   });
 
   priceElement.addEventListener('change', function () {
-    checkValidity();
+    checkValidity(priceElement);
   });
 
   timeInElement.addEventListener('change', function () {
