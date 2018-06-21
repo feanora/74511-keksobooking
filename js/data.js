@@ -53,30 +53,20 @@
   var ROOM_MAX = 5;
   var GUESTS_MIN = 1;
   var GUESTS_MAX = 20;
-  var adTitlesRandomIndexes = [];
+
   var avatarsIndexes = [];
   var avatarsRandomIndexes = [];
-
-  // Создание массива со случайными индексами массива заголовков предолжения
-  var getAdTitlesRandomIndexes = function (array) {
-    return window.util.getRandomIndexArray(array);
-  };
 
   // Создание массива с номерами аватаров
   var getAvatarsIndexes = function (avatarNumberMin, avatarNumberMax) {
     return window.util.getArray(avatarNumberMin, avatarNumberMax);
   };
 
-  // Создание массива со случайными индексами массива аватаров
-  var getAvatarsRandomIndexes = function () {
-    return window.util.getRandomIndexArray(avatarsIndexes);
-  };
-
   // Генерация адреса аватара
   var createAvatarAddress = function (i) {
     var avatarPath = 'img/avatars/user';
     var avatarFormat = '.png';
-    var avatarNumber = avatarsIndexes[avatarsRandomIndexes[i]];
+    var avatarNumber = avatarsRandomIndexes[i];
     // Если изображений станет больше 9, то 0 не нужен
     if (avatarNumber < 10) {
       avatarNumber = '0' + avatarNumber;
@@ -87,8 +77,8 @@
   // Генерация массива с объявлениями
   window.initAds = function () {
     avatarsIndexes = getAvatarsIndexes(AVATAR_NUMBER_MIN, AVATAR_NUMBER__MAX);
-    avatarsRandomIndexes = getAvatarsRandomIndexes();
-    adTitlesRandomIndexes = getAdTitlesRandomIndexes(AD_TITLES);
+    avatarsRandomIndexes = window.util.shuffleArray(avatarsIndexes);
+    var titles = window.util.shuffleArray(AD_TITLES);
     var newAds = [];
     for (var i = 0; i < AD_NUMBER; i++) {
       var locationX = window.util.getRandomNumber(COODRINATE_X_MIN, COODRINATE_X_MAX);
@@ -98,7 +88,7 @@
           avatar: createAvatarAddress(i)
         },
         offer: {
-          title: AD_TITLES[adTitlesRandomIndexes[i]],
+          title: titles[i],
           address: locationX + ', ' + locationY,
           price: window.util.getRandomNumber(PRICE_MIN, PRICE_MAX),
           type: HOUSING_TYPES[window.util.getRandomNumber(0, HOUSING_TYPES.length - 1)],

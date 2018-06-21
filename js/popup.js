@@ -30,36 +30,40 @@
     }
   };
 
-  // Заполнение родительского элемента дочерними
-  var fillParentElement = function (items, tag, Classname, parentElement) {
+  // Создание фрагмента для последующего заполнения родительского элемента
+  var preparedFragment = function (items, tag, classname) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < items.length; i++) {
       var item = document.createElement(tag);
-      item.className = Classname;
+      item.className = classname;
       fragment.appendChild(item);
     }
-    parentElement.appendChild(fragment);
+    return fragment;
   };
 
   // Заполнение списка преимуществ
   var fillFeaturesListElement = function (ad, features) {
     deleteChildElement(featuresListElement);
-    fillParentElement(features, 'li', 'popup__feature', featuresListElement);
-    for (var i = 0; i < features.length; i++) {
+    var featuresFragment = preparedFragment(features, 'li', 'popup__feature');
+    var featureItems = featuresFragment.querySelectorAll('.popup__feature');
+    for (var i = 0; i < featureItems.length; i++) {
       var newFeaturesClass = 'popup__feature--' + features[i];
-      featuresListElement.children[i].classList.add(newFeaturesClass);
+      featureItems[i].classList.add(newFeaturesClass);
     }
+    featuresListElement.appendChild(featuresFragment);
   };
 
   // Заполнение списка фотографий
   var fillPhotosListElement = function (ad, photos) {
     deleteChildElement(photosListElement);
-    fillParentElement(photos, 'img', 'popup__photo', photosListElement);
+    var photosFragment = preparedFragment(photos, 'img', 'popup__photo');
+    var photoItems = photosFragment.querySelectorAll('.popup__photo');
     for (var i = 0; i < photos.length; i++) {
-      photosListElement.children[i].src = photos[i];
-      photosListElement.children[i].width = PHOTO_WIDTH;
-      photosListElement.children[i].height = PHOTO_HEIGHT;
+      photoItems[i].src = photos[i];
+      photoItems[i].width = PHOTO_WIDTH;
+      photoItems[i].height = PHOTO_HEIGHT;
     }
+    photosListElement.appendChild(photosFragment);
   };
 
   // Создание DOM-элемента попапа объявления
@@ -70,7 +74,7 @@
     var adPopupElement = cadrTemplateElement.cloneNode(true);
     adPopupElement.querySelector('.popup__title').textContent = ad.offer.title;
     adPopupElement.querySelector('.popup__text--address').textContent = ad.offer.address;
-    adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + '₽/ночь';
+    adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + ' ₽/ночь';
     adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
     adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
     adPopupElement.querySelector('.popup__description').textContent = ad.offer.description;
