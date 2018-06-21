@@ -111,19 +111,19 @@
 
   // Сброс страницы в начальное состояние
   var pageReset = function () {
-    window.pageModes.switchToInertMode();
-    window.pins.removePinsElements();
+    window.pageModes.switchToInert();
+    window.pins.removeElements();
     var popupElement = mapElement.querySelector('.map__card');
     if (popupElement) {
-      window.popup.closePopup();
+      window.popup.close();
     }
     formElement.reset();
-    window.mainPin.resetPin();
+    window.mainPin.reset();
     window.mainPin.showAddress();
   };
 
   resetElement.addEventListener('click', function () {
     pageReset();
-    mainPinElement.addEventListener('mouseup', window.mainPin.mainPinElementClickHandler);
+    mainPinElement.addEventListener('mouseup', window.mainPin.ElementClickHandler);
   });
 })();

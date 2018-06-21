@@ -27,7 +27,7 @@
   };
 
   window.pageModes = {
-    switchToInertMode: switchToInertMode,
-    switchToDynamicMode: switchToDynamicMode
+    switchToInert: switchToInertMode,
+    switchToDynamic: switchToDynamicMode
   };
 })();

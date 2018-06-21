@@ -82,9 +82,9 @@
 
   // Обработчик клика на метку (без перемещения)
   var mainPinElementClickHandler = function () {
-    window.pageModes.switchToDynamicMode();
+    window.pageModes.switchToDynamic();
     showAddress();
-    window.pins.renderPinsElements();
+    window.pins.renderElements();
     mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
   };
 
@@ -99,7 +99,7 @@
 
   window.mainPin = {
     showAddress: showAddress,
-    mainPinElementClickHandler: mainPinElementClickHandler,
-    resetPin: resetPin
+    ElementClickHandler: mainPinElementClickHandler,
+    reset: resetPin
   };
 })();

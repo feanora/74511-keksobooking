@@ -82,7 +82,7 @@
     adPopupElement.querySelector('.popup__avatar').src = ad.author.avatar;
     var popupCloseElement = adPopupElement.querySelector('.popup__close');
     popupCloseElement.addEventListener('click', function () {
-      window.popup.closePopup();
+      window.popup.close();
     });
     document.addEventListener('keydown', popupEscPressHandler);
     return adPopupElement;
@@ -92,14 +92,14 @@
   var renderAdPopapElement = function (ad) {
     var popupElement = mapElement.querySelector('.map__card');
     if (popupElement) {
-      closePopup();
+      window.popup.close();
     }
     mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
   };
 
   // Закрытие попапа по нажатию на esc
   var popupEscPressHandler = function (evt) {
-    window.util.performActionIfEscEvent(evt, window.popup.closePopup);
+    window.util.performActionIfEscEvent(evt, window.popup.close);
   };
 
   // Закрытие попапа с объявлением
@@ -110,7 +110,7 @@
   };
 
   window.popup = {
-    closePopup: closePopup,
-    renderAdPopapElement: renderAdPopapElement
+    close: closePopup,
+    renderElement: renderAdPopapElement
   };
 })();

@@ -16,7 +16,7 @@
     pinAvatarElement.src = pin.author.avatar;
     pinAvatarElement.alt = pin.offer.title;
     pinElement.addEventListener('click', function () {
-      window.popup.renderAdPopapElement(pin);
+      window.popup.renderElement(pin);
     });
     return pinElement;
   };
@@ -39,8 +39,8 @@
   };
 
   window.pins = {
-    initPinElement: initPinElement,
-    renderPinsElements: renderPinsElements,
-    removePinsElements: removePinsElements
+    initElement: initPinElement,
+    renderElements: renderPinsElements,
+    removeElements: removePinsElements
   };
 })();

@@ -2,7 +2,7 @@
 
 (function () {
   var init = function () {
-    window.pageModes.switchToInertMode();
+    window.pageModes.switchToInert();
     window.mainPin.showAddress();
     window.util.ads = window.initAds();
   };
