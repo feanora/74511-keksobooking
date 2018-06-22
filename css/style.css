@@ -1010,7 +1010,7 @@ fieldset {
 
 .map__card {
   position: absolute;
-  z-index: 2;
+  z-index: 20;
   top: 150px;
   left: 20px;
 
