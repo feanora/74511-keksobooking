@@ -99,7 +99,7 @@
 
   window.mainPin = {
     showAddress: showAddress,
-    ElementClickHandler: mainPinElementClickHandler,
+    elementClickHandler: mainPinElementClickHandler,
     reset: resetPin
   };
 })();

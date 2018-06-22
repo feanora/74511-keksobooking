@@ -124,6 +124,6 @@
 
   resetElement.addEventListener('click', function () {
     pageReset();
-    mainPinElement.addEventListener('mouseup', window.mainPin.ElementClickHandler);
+    mainPinElement.addEventListener('mouseup', window.mainPin.elementClickHandler);
   });
 })();
