@@ -21,13 +21,31 @@
     return pinElement;
   };
 
-  // Заполнение карты DOM-элементами на основе массива с объектами
-  var renderPinsElements = function () {
+  // Обработчик успешной загрузки данных для отрисовки меток похожих объявлений
+  var loadHandler = function (ads) {
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < window.util.ads.length; i++) {
-      fragment.appendChild(initPinElement(window.util.ads[i]));
+    for (var i = 0; i < ads.length; i++) {
+      fragment.appendChild(initPinElement(ads[i]));
       pinsLocationElement.appendChild(fragment);
     }
+  };
+
+  // Обработчик ошибки
+  var errorHandler = function (errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0; text-align: center; background-color: rgba(0, 204, 255, 0.5)';
+    node.style.position = 'absolute';
+    node.style.left = '0';
+    node.style.right = '0';
+    node.style.fontZixe = '24px';
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+
+    var closeErrorMessage = function () {
+      document.body.removeChild(node);
+    };
+
+    setTimeout(closeErrorMessage, 7000);
   };
 
   // Удаление меток похожих объявлений с карты
@@ -39,8 +57,8 @@
   };
 
   window.pins = {
-    initElement: initPinElement,
-    renderElements: renderPinsElements,
+    loadHandler: loadHandler,
+    errorHandler: errorHandler,
     removeElements: removePinsElements
   };
 })();
