@@ -5,11 +5,9 @@
   var mapElement = document.querySelector('.map');
   var formElement = document.querySelector('.ad-form');
   var mainPinElement = document.querySelector('.map__pin--main');
-  var ads = [];
 
   window.util = {
     mapElement: mapElement,
-    ads: ads,
     formElement: formElement,
     mainPinElement: mainPinElement,
 

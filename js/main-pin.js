@@ -84,7 +84,7 @@
   var mainPinElementClickHandler = function () {
     window.pageModes.switchToDynamic();
     showAddress();
-    window.pins.renderElements();
+    window.backend.load(window.pins.loadHandler, window.pins.errorHandler);
     mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
   };
 
