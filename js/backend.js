@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var ERROR_CODES = {
+  var Code = {
     OK: 200,
     BAD_REQUES: 400,
     UNAUTHORIZED: 401,
@@ -14,16 +14,16 @@
 
     xhr.addEventListener('load', function () {
       switch (xhr.status) {
-        case ERROR_CODES.OK:
+        case Code.OK:
           onLoad(xhr.response);
           break;
-        case ERROR_CODES.BAD_REQUES:
+        case Code.BAD_REQUES:
           onError('Неверный запрос');
           break;
-        case ERROR_CODES.UNAUTHORIZED:
+        case Code.UNAUTHORIZED:
           onError('Пользователь не авторизован');
           break;
-        case ERROR_CODES.NOT_FOUND:
+        case Code.NOT_FOUND:
           onError('Ничего не найдено');
           break;
 

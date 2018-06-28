@@ -1,25 +1,6 @@
 'use strict';
 
 (function () {
-  var PRICE_DEPENDENCIES = {
-    'bungalo': {
-      price: '0',
-      placeholder: '0'
-    },
-    'flat': {
-      price: '1000',
-      placeholder: '1000'
-    },
-    'house': {
-      price: '5000',
-      placeholder: '5000'
-    },
-    'palace': {
-      price: '10000',
-      placeholder: '10000'
-    }
-  };
-
   var mapElement = window.util.mapElement;
   var formElement = window.util.formElement;
   var mainPinElement = window.util.mainPinElement;
@@ -52,23 +33,27 @@
 
   // Изменение значения минимальной цены и плейсхолдера в зависимости от типа жилья
   var changePriceValue = function () {
-    priceElement.min = PRICE_DEPENDENCIES[selectTypeElement.value].price;
-    priceElement.placeholder = PRICE_DEPENDENCIES[selectTypeElement.value].placeholder;
+    priceElement.min = window.util.housingTypeMap[selectTypeElement.value].PRICE;
+    priceElement.placeholder = window.util.housingTypeMap[selectTypeElement.value].PLACEHOLDER;
   };
 
   // Синхронизация количества комнат и количества гостей
   var synchronizeRoomsAndGuests = function () {
-    if ((roomNumberElement.value === '1') && (guestNumberElement.value !== '1')) {
-      guestNumberElement.setCustomValidity('Одна комната только для одного гостя');
-    } else if ((roomNumberElement.value === '2') && (guestNumberElement.value !== '1') && (guestNumberElement.value !== '2')) {
-      guestNumberElement.setCustomValidity('Две комнаты только для одного или двоих гостей');
-    } else if ((roomNumberElement.value === '3') && (guestNumberElement.value === '0')) {
-      guestNumberElement.setCustomValidity('Только для гостей');
-    } else if ((roomNumberElement.value === '100') && (guestNumberElement.value !== '0')) {
-      guestNumberElement.setCustomValidity('Сто комнат не для гостей');
+    var rooms = roomNumberElement.value;
+    var guests = guestNumberElement.value;
+    var message;
+    if ((rooms === '1') && (guests !== '1')) {
+      message = 'Одна комната только для одного гостя';
+    } else if ((rooms === '2') && (guests !== '1') && (guests !== '2')) {
+      message = 'Две комнаты только для одного или двоих гостей';
+    } else if ((rooms === '3') && (guests === '0')) {
+      message = 'Только для гостей';
+    } else if ((rooms === '100') && (guests !== '0')) {
+      message = 'Сто комнат не для гостей';
     } else {
-      guestNumberElement.setCustomValidity('');
+      message = '';
     }
+    guestNumberElement.setCustomValidity(message);
   };
 
   guestNumberElement.addEventListener('change', function () {
@@ -117,6 +102,7 @@
   var pageReset = function () {
     window.pageModes.switchToInert();
     window.pins.removeElements();
+    window.util.isPinActive = false;
     var popupElement = mapElement.querySelector('.map__card');
     if (popupElement) {
       window.popup.close();
@@ -134,7 +120,7 @@
   // Закрытие сообщения об успешной отправке формы
   var closeSuccessMessage = function () {
     successMessageElement.classList.add('hidden');
-    document.removeEventListener(successMessageEscPressHandler);
+    document.removeEventListener('keydown', successMessageEscPressHandler);
     document.removeEventListener('click', successMessageClickHandler);
   };
 

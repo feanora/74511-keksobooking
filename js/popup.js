@@ -1,14 +1,16 @@
 'use strict';
 
 (function () {
-  var PHOTO_WIDTH = 45; // из css
-  var PHOTO_HEIGHT = 40; // из css
+  var PhotoSize = {
+    WIDTH: 45,
+    HEIGHT: 40
+  };
+
   var cadrTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__card');
   var mapElement = window.util.mapElement;
   var mapFiltersContainerElement = mapElement.querySelector('.map__filters-container');
   var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
   var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
-  var typeElement = cadrTemplateElement.querySelector('.popup__type');
 
   // Удаление потомков
   var deleteChildElement = function (parent) {
@@ -16,19 +18,6 @@
       parent.removeChild(parent.firstChild);
     }
     return parent;
-  };
-
-  // Вывод типа жилья
-  var identifyHousingType = function (ad) {
-    if (ad.offer.type === 'flat') {
-      typeElement.textContent = 'Квартира';
-    } else if (ad.offer.type === 'bungalo') {
-      typeElement.textContent = 'Бунгало';
-    } else if (ad.offer.type === 'house') {
-      typeElement.textContent = 'Дом';
-    } else {
-      typeElement.textContent = 'Дворец';
-    }
   };
 
   // Создание фрагмента для последующего заполнения родительского элемента
@@ -61,23 +50,47 @@
     var photoItems = photosFragment.querySelectorAll('.popup__photo');
     for (var i = 0; i < photos.length; i++) {
       photoItems[i].src = photos[i];
-      photoItems[i].width = PHOTO_WIDTH;
-      photoItems[i].height = PHOTO_HEIGHT;
+      photoItems[i].width = PhotoSize.WIDTH;
+      photoItems[i].height = PhotoSize.HEIGHT;
     }
     photosListElement.appendChild(photosFragment);
   };
 
+  // Склонение слова "комната"
+  var declensionRoom = function (number) {
+    var word;
+    if (number % 10 === 1) {
+      word = 'комната';
+    } else if ((number % 10 > 1) && (number % 10 < 5)) {
+      word = 'комнаты';
+    } else {
+      word = 'комнат';
+    }
+    return word;
+  };
+
+  // Склонение слова "гость"
+  var declensionGuest = function (number) {
+    var word;
+    if (number % 10 === 1 && number !== 11) {
+      word = 'гостя';
+    } else {
+      word = 'гостей';
+    }
+    return word;
+  };
+
   // Создание DOM-элемента попапа объявления
   var initAdPopupElement = function (ad) {
-    identifyHousingType(ad);
     fillFeaturesListElement(ad, ad.offer.features);
     fillPhotosListElement(ad, ad.offer.photos);
     var adPopupElement = cadrTemplateElement.cloneNode(true);
     adPopupElement.querySelector('.popup__title').textContent = ad.offer.title;
     adPopupElement.querySelector('.popup__text--address').textContent = ad.offer.address;
     adPopupElement.querySelector('.popup__text--price').textContent = ad.offer.price + ' ₽/ночь';
-    adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
-    adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после' + ad.offer.checkin + ', выезд до' + ad.offer.checkout;
+    adPopupElement.querySelector('.popup__type').textContent = window.util.housingTypeMap[ad.offer.type].TYPE;
+    adPopupElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' ' + declensionRoom(ad.offer.rooms) + ' для ' + ad.offer.guests + ' ' + declensionGuest(ad.offer.guests);
+    adPopupElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
     adPopupElement.querySelector('.popup__description').textContent = ad.offer.description;
     adPopupElement.querySelector('.popup__avatar').src = ad.author.avatar;
     var popupCloseElement = adPopupElement.querySelector('.popup__close');

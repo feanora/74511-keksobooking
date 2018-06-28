@@ -6,7 +6,7 @@
 
   var pinTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__pin');
   var pinsLocationElement = document.querySelector('.map__pins');
-  var isPinActive = false;
+  window.util.isPinActive = false;
 
   // Создание DOM-элемента метки на карте
   var initPinElement = function (pin) {
@@ -17,13 +17,13 @@
     pinAvatarElement.src = pin.author.avatar;
     pinAvatarElement.alt = pin.offer.title;
     pinElement.addEventListener('click', function () {
-      if (isPinActive) {
+      if (window.util.isPinActive) {
         var pinAvctivElement = pinsLocationElement.querySelector('.map__pin--active');
         pinAvctivElement.classList.remove('map__pin--active');
       }
       window.popup.renderElement(pin);
       pinElement.classList.add('map__pin--active');
-      isPinActive = true;
+      window.util.isPinActive = true;
     });
     return pinElement;
   };
