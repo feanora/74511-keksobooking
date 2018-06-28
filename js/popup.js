@@ -69,15 +69,8 @@
     return word;
   };
 
-  // Склонение слова "гость"
   var declensionGuest = function (number) {
-    var word;
-    if (number % 10 === 1 && number !== 11) {
-      word = 'гостя';
-    } else {
-      word = 'гостей';
-    }
-    return word;
+    return (number % 10 === 1 && number !== 11) ? 'гостя' : 'гостей';
   };
 
   // Создание DOM-элемента попапа объявления
