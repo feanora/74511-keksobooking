@@ -8,9 +8,9 @@
 
   var cadrTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__card');
   var mapElement = window.util.mapElement;
-  var mapFiltersContainerElement = mapElement.querySelector('.map__filters-container');
   var featuresListElement = cadrTemplateElement.querySelector('.popup__features');
   var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
+  var filtersContainerElement = mapElement.querySelector('.map__filters-container');
 
   // Удаление потомков
   var deleteChildElement = function (parent) {
@@ -69,6 +69,7 @@
     return word;
   };
 
+  // Склонение слова "гость"
   var declensionGuest = function (number) {
     return (number % 10 === 1 && number !== 11) ? 'гостя' : 'гостей';
   };
@@ -94,13 +95,18 @@
     return adPopupElement;
   };
 
-  // Отрисовка попапа
-  var renderAdPopapElement = function (ad) {
+  // Закрытие попапа, если он открыт
+  var closeIfOpen = function () {
     var popupElement = mapElement.querySelector('.map__card');
     if (popupElement) {
       window.popup.close();
     }
-    mapElement.insertBefore(initAdPopupElement(ad), mapFiltersContainerElement);
+  };
+
+  // Отрисовка попапа
+  var renderAdPopapElement = function (ad) {
+    closeIfOpen();
+    mapElement.insertBefore(initAdPopupElement(ad), filtersContainerElement);
   };
 
   // Закрытие попапа по нажатию на esc
@@ -113,10 +119,12 @@
     var popupElement = mapElement.querySelector('.map__card');
     mapElement.removeChild(popupElement);
     document.removeEventListener('keydown', popupEscPressHandler);
+    window.pins.removeActiveClass();
   };
 
   window.popup = {
     close: closePopup,
+    closeIfOpen: closeIfOpen,
     renderElement: renderAdPopapElement
   };
 })();

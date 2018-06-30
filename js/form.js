@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var mapElement = window.util.mapElement;
   var formElement = window.util.formElement;
   var mainPinElement = window.util.mainPinElement;
   var titleElement = formElement.querySelector('#title');
@@ -101,12 +100,9 @@
   // Сброс страницы в начальное состояние
   var pageReset = function () {
     window.pageModes.switchToInert();
-    window.pins.removeElements();
+    window.pins.remove();
     window.util.isPinActive = false;
-    var popupElement = mapElement.querySelector('.map__card');
-    if (popupElement) {
-      window.popup.close();
-    }
+    window.popup.closeIfOpen();
     formElement.reset();
     window.mainPin.reset();
     window.mainPin.showAddress();

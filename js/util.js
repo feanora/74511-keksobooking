@@ -77,6 +77,13 @@
         newArray[i] = array[i];
       }
       return newArray;
+    },
+
+    // Добавление/удаление у полей формы атрибута disabled
+    toggleDisabledFields: function (elements, value) {
+      for (var i = 0; i < elements.length; i++) {
+        elements[i].disabled = value;
+      }
     }
   };
 })();

@@ -91,8 +91,9 @@
   // Обработчик клика на метку (без перемещения)
   var mainPinElementClickHandler = function () {
     window.pageModes.switchToDynamic();
+    window.loadPins.switchFiltersToInertMode();
     showAddress();
-    window.backend.load(window.pins.loadHandler, window.pins.errorHandler);
+    window.backend.load(window.loadPins.successHandler, window.loadPins.errorHandler);
     mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
   };
 
