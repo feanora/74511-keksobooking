@@ -48,12 +48,9 @@
     return filteredAds;
   };
 
-  // Фильтрация массива объявлений по уровню цены
-  var filterArrayByPrice = function () {
-    if (housingPriceElement.value === DEFAULT_VALUE) {
-      return filteredAds;
-    }
-    filteredAds = filteredAds.filter(function (ad) {
+  // Подготовка к фильтрации по цене
+  var preparedForFiltration = function (array) {
+    return array.filter(function (ad) {
       var price = ad.offer.price;
       switch (housingPriceElement.value) {
         case PriceValue.MIDDLE:
@@ -66,6 +63,14 @@
           return false;
       }
     });
+  };
+
+  // Фильтрация массива объявлений по уровню цены
+  var filterArrayByPrice = function () {
+    if (housingPriceElement.value === DEFAULT_VALUE) {
+      return filteredAds;
+    }
+    filteredAds = preparedForFiltration(filteredAds);
     return filteredAds;
   };
 
