@@ -39,30 +39,33 @@
 
   // Фильтрация массива объявлений по значению атрибута value у select
   var filterArrayByValue = function (selectElement, key) {
-    if (selectElement.value !== DEFAULT_VALUE) {
-      filteredAds = filteredAds.filter(function (ad) {
-        return ad.offer[key].toString() === selectElement.value;
-      });
+    if (selectElement.value === DEFAULT_VALUE) {
+      return filteredAds;
     }
+    filteredAds = filteredAds.filter(function (ad) {
+      return ad.offer[key].toString() === selectElement.value;
+    });
     return filteredAds;
   };
 
   // Фильтрация массива объявлений по уровню цены
   var filterArrayByPrice = function () {
-    if (housingPriceElement.value !== DEFAULT_VALUE) {
-      filteredAds = filteredAds.filter(function (ad) {
-        var price = ad.offer.price;
-        switch (housingPriceElement.value) {
-          case PriceValue.MIDDLE:
-            return price > PriceRange.FIRST_POINT && price < PriceRange.SECOND_POINT;
-          case PriceValue.LOW:
-            return price <= PriceRange.FIRST_POINT;
-          case PriceValue.HIGH:
-            return price >= PriceRange.SECOND_POINT;
-        }
-        return filteredAds;
-      });
+    if (housingPriceElement.value === DEFAULT_VALUE) {
+      return filteredAds;
     }
+    filteredAds = filteredAds.filter(function (ad) {
+      var price = ad.offer.price;
+      switch (housingPriceElement.value) {
+        case PriceValue.MIDDLE:
+          return price > PriceRange.FIRST_POINT && price < PriceRange.SECOND_POINT;
+        case PriceValue.LOW:
+          return price <= PriceRange.FIRST_POINT;
+        case PriceValue.HIGH:
+          return price >= PriceRange.SECOND_POINT;
+        default:
+          return false;
+      }
+    });
     return filteredAds;
   };
 
