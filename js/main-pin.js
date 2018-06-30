@@ -1,15 +1,23 @@
 'use strict';
 
 (function () {
-  var MAIN_PIN_WIDTH = 65; // из css
-  var MAIN_PIN_HEIGHT = 65; // из css
-  var MAIN_PIN_SHANK = 22; // из css
-  var MAIN_PIN_X_START = 570; // из разметки
-  var MAIN_PIN_Y_START = 375; // из разметки
-  var X_MIN = 0;
-  var X_MAX = 1200;
-  var Y_MIN = 130;
-  var Y_MAX = 630;
+  var MainPinSize = {
+    WIDTH: 65,
+    HEIGHT: 65,
+    SHANK: 22
+  };
+
+  var MainPinStartCoord = {
+    X: 570,
+    Y: 337
+  };
+
+  var LimitationOnCoord = {
+    X_MIN: 0,
+    X_MAX: 1200,
+    Y_MIN: 130,
+    Y_MAX: 630
+  };
 
   var formElement = window.util.formElement;
   var mainPinElement = window.util.mainPinElement;
@@ -22,19 +30,19 @@
 
   // Заполнение поля адреса
   var showAddress = function () {
-    var mainPinX = convertToNumber(mainPinElement.style.left) + MAIN_PIN_WIDTH / 2;
-    var mainPinY = convertToNumber(mainPinElement.style.top) + MAIN_PIN_HEIGHT + MAIN_PIN_SHANK;
+    var mainPinX = convertToNumber(mainPinElement.style.left) + MainPinSize.WIDTH / 2;
+    var mainPinY = convertToNumber(mainPinElement.style.top) + MainPinSize.HEIGHT + MainPinSize.SHANK;
     addressFieldElement.value = mainPinX + ', ' + mainPinY;
     return addressFieldElement.value;
   };
 
   var minCoord = {
-    x: X_MIN,
-    y: Y_MIN - MAIN_PIN_HEIGHT - MAIN_PIN_SHANK
+    x: LimitationOnCoord.X_MIN,
+    y: LimitationOnCoord.Y_MIN - MainPinSize.HEIGHT - MainPinSize.SHANK
   };
   var maxCoord = {
-    x: X_MAX - MAIN_PIN_WIDTH,
-    y: Y_MAX - MAIN_PIN_HEIGHT - MAIN_PIN_SHANK
+    x: LimitationOnCoord.X_MAX - MainPinSize.WIDTH,
+    y: LimitationOnCoord.Y_MAX - MainPinSize.HEIGHT - MainPinSize.SHANK
   };
 
   // Расчет положения метки
@@ -83,8 +91,9 @@
   // Обработчик клика на метку (без перемещения)
   var mainPinElementClickHandler = function () {
     window.pageModes.switchToDynamic();
+    window.loadPins.switchFiltersToInertMode();
     showAddress();
-    window.backend.load(window.pins.loadHandler, window.pins.errorHandler);
+    window.backend.load(window.loadPins.successHandler, window.loadPins.errorHandler);
     mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
   };
 
@@ -93,8 +102,8 @@
 
   // Возвращение главного пина в начальное положение
   var resetPin = function () {
-    mainPinElement.style.top = MAIN_PIN_Y_START + 'px';
-    mainPinElement.style.left = MAIN_PIN_X_START + 'px';
+    mainPinElement.style.top = MainPinStartCoord.Y + 'px';
+    mainPinElement.style.left = MainPinStartCoord.X + 'px';
   };
 
   window.mainPin = {

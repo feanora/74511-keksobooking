@@ -1,58 +1,50 @@
 'use strict';
 
 (function () {
-  var PIN_WIDTH = 50; // из css
-  var PIN_HEIGHT = 70; // из css
+  var PinSize = {
+    WIDTH: 50,
+    HEIGHT: 70
+  };
+
+  var PIN_NUMBER = 5;
 
   var pinTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__pin');
   var pinsLocationElement = document.querySelector('.map__pins');
-  var isPinActive = false;
+  window.util.isPinActive = false;
+
+  // Удаление у метки класса active, если он есть
+  var removeActiveClass = function () {
+    if (window.util.isPinActive) {
+      var pinAvctivElement = pinsLocationElement.querySelector('.map__pin--active');
+      pinAvctivElement.classList.remove('map__pin--active');
+      window.util.isPinActive = false;
+    }
+  };
 
   // Создание DOM-элемента метки на карте
   var initPinElement = function (pin) {
     var pinElement = pinTemplateElement.cloneNode(true);
     var pinAvatarElement = pinElement.querySelector('img');
-    pinElement.style.left = pin.location.x - (PIN_WIDTH / 2) + 'px';
-    pinElement.style.top = pin.location.y - PIN_HEIGHT + 'px';
+    pinElement.style.left = pin.location.x - (PinSize.WIDTH / 2) + 'px';
+    pinElement.style.top = pin.location.y - PinSize.HEIGHT + 'px';
     pinAvatarElement.src = pin.author.avatar;
     pinAvatarElement.alt = pin.offer.title;
     pinElement.addEventListener('click', function () {
-      if (isPinActive) {
-        var pinAvctivElement = pinsLocationElement.querySelector('.map__pin--active');
-        pinAvctivElement.classList.remove('map__pin--active');
-      }
+      removeActiveClass();
       window.popup.renderElement(pin);
       pinElement.classList.add('map__pin--active');
-      isPinActive = true;
+      window.util.isPinActive = true;
     });
     return pinElement;
   };
 
-  // Обработчик успешной загрузки данных для отрисовки меток похожих объявлений
-  var loadHandler = function (ads) {
+  var renderPinsElements = function (ads) {
+    var arrayLength = ads.length > PIN_NUMBER ? PIN_NUMBER : ads.length;
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < ads.length; i++) {
+    for (var i = 0; i < arrayLength; i++) {
       fragment.appendChild(initPinElement(ads[i]));
       pinsLocationElement.appendChild(fragment);
     }
-  };
-
-  // Обработчик ошибки
-  var errorHandler = function (errorMessage) {
-    var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0; text-align: center; background-color: rgba(0, 204, 255, 0.5)';
-    node.style.position = 'absolute';
-    node.style.left = '0';
-    node.style.right = '0';
-    node.style.fontZixe = '24px';
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-
-    var closeErrorMessage = function () {
-      document.body.removeChild(node);
-    };
-
-    setTimeout(closeErrorMessage, 7000);
   };
 
   // Удаление меток похожих объявлений с карты
@@ -64,8 +56,8 @@
   };
 
   window.pins = {
-    loadHandler: loadHandler,
-    errorHandler: errorHandler,
-    removeElements: removePinsElements
+    render: renderPinsElements,
+    remove: removePinsElements,
+    removeActiveClass: removeActiveClass
   };
 })();
