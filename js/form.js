@@ -105,6 +105,8 @@
     window.popup.closeIfOpen();
     formElement.reset();
     window.mainPin.reset();
+    window.images.avatarReset();
+    window.images.resetHousingPhoto();
     window.mainPin.showAddress();
   };
 

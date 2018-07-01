@@ -77,11 +77,11 @@
   // Фильтрация по удобствам
   var filterArrayByFeatures = function () {
     var housingFeaturesElements = housingFeaturesElement.querySelectorAll('input:checked');
-    for (var i = 0; i < housingFeaturesElements.length; i++) {
+    Array.from(housingFeaturesElements).forEach(function (it) {
       filteredAds = filteredAds.filter(function (ad) {
-        return ad.offer.features.includes(housingFeaturesElements[i].value);
+        return ad.offer.features.includes(it.value);
       });
-    }
+    });
     return filteredAds;
   };
 
