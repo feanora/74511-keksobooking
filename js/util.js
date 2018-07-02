@@ -60,23 +60,12 @@
       return newArray;
     },
 
-    // Генерация числового массива от min до max
-    getArray: function (min, max) {
-      var array = [];
-      for (var i = min; i <= max; i++) {
-        array.push(i);
+    // Удаление потомков
+    deleteChildElement: function (parent) {
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
       }
-      return array;
-    },
-
-    // Генерация массива произвольной длины из исходного массива
-    getRandomLengthArray: function (array) {
-      var newArray = [];
-      var newArrayLength = window.util.getRandomNumber(1, array.length);
-      for (var i = 0; i < newArrayLength; i++) {
-        newArray[i] = array[i];
-      }
-      return newArray;
+      return parent;
     },
 
     // Добавление/удаление у полей формы атрибута disabled

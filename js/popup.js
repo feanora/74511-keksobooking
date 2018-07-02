@@ -12,14 +12,6 @@
   var photosListElement = cadrTemplateElement.querySelector('.popup__photos');
   var filtersContainerElement = mapElement.querySelector('.map__filters-container');
 
-  // Удаление потомков
-  var deleteChildElement = function (parent) {
-    while (parent.firstChild) {
-      parent.removeChild(parent.firstChild);
-    }
-    return parent;
-  };
-
   // Создание фрагмента для последующего заполнения родительского элемента
   var preparedFragment = function (items, tag, classname) {
     var fragment = document.createDocumentFragment();
@@ -33,7 +25,7 @@
 
   // Заполнение списка преимуществ
   var fillFeaturesListElement = function (ad, features) {
-    deleteChildElement(featuresListElement);
+    window.util.deleteChildElement(featuresListElement);
     var featuresFragment = preparedFragment(features, 'li', 'popup__feature');
     var featureItems = featuresFragment.querySelectorAll('.popup__feature');
     for (var i = 0; i < featureItems.length; i++) {
@@ -45,7 +37,7 @@
 
   // Заполнение списка фотографий
   var fillPhotosListElement = function (ad, photos) {
-    deleteChildElement(photosListElement);
+    window.util.deleteChildElement(photosListElement);
     var photosFragment = preparedFragment(photos, 'img', 'popup__photo');
     var photoItems = photosFragment.querySelectorAll('.popup__photo');
     for (var i = 0; i < photos.length; i++) {
