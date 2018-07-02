@@ -1,19 +1,19 @@
 'use strict';
 
 (function () {
-  var formElement = window.util.formElement;
-  var avatarChooserElement = formElement.querySelector('#avatar');
-  var avatarPreviewElement = formElement.querySelector('.ad-form-header__avatar');
-  var photoTemplateElement = document.querySelector('#photo__template').content.querySelector('.ad-form__photo');
-  var photoChooserElement = formElement.querySelector('#images');
-  var photoContainerElement = formElement.querySelector('.ad-form__photo-container');
-
   var FILE_TYPES = [
     'gif',
     'jpg',
     'jpeg',
     'png'
   ];
+
+  var formElement = window.util.formElement;
+  var avatarChooserElement = formElement.querySelector('#avatar');
+  var avatarPreviewElement = formElement.querySelector('.ad-form-header__avatar');
+  var photoTemplateElement = document.querySelector('#photo__template').content.querySelector('.ad-form__photo');
+  var photoChooserElement = formElement.querySelector('#images');
+  var photoContainerElement = formElement.querySelector('.ad-form__photo-container');
 
   // Проверка расширения файла
   var checkIfFileTypeIsCorrect = function (file) {

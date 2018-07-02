@@ -1,16 +1,7 @@
 'use strict';
 
 (function () {
-  var ads = [];
-  var filteredAds = [];
-  var filtersFormElement = document.querySelector('.map__filters');
-  var housingTypeElement = filtersFormElement.querySelector('#housing-type');
-  var housingPriceElement = filtersFormElement.querySelector('#housing-price');
-  var housingRoomsElement = filtersFormElement.querySelector('#housing-rooms');
-  var housingGuestsElement = filtersFormElement.querySelector('#housing-guests');
-  var housingFeaturesElement = filtersFormElement.querySelector('#housing-features');
-  var selectFilterElements = filtersFormElement.querySelectorAll('select');
-  var checkboxFilterElements = filtersFormElement.querySelectorAll('input');
+  var DEFAULT_VALUE = 'any';
 
   var PriceRange = {
     FIRST_POINT: 10000,
@@ -23,7 +14,16 @@
     HIGH: 'high'
   };
 
-  var DEFAULT_VALUE = 'any';
+  var ads = [];
+  var filteredAds = [];
+  var filtersFormElement = document.querySelector('.map__filters');
+  var housingTypeElement = filtersFormElement.querySelector('#housing-type');
+  var housingPriceElement = filtersFormElement.querySelector('#housing-price');
+  var housingRoomsElement = filtersFormElement.querySelector('#housing-rooms');
+  var housingGuestsElement = filtersFormElement.querySelector('#housing-guests');
+  var housingFeaturesElement = filtersFormElement.querySelector('#housing-features');
+  var selectFilterElements = filtersFormElement.querySelectorAll('select');
+  var checkboxFilterElements = filtersFormElement.querySelectorAll('input');
 
   // Переключение фильтров в неактивное состояние
   var switchFiltersToInertMode = function () {
@@ -86,7 +86,7 @@
   };
 
   // Фильтрация по всем параметрам
-  var sorting = function () {
+  var sortAll = function () {
     filterArrayByValue(housingTypeElement, 'type');
     filterArrayByValue(housingRoomsElement, 'rooms');
     filterArrayByValue(housingGuestsElement, 'guests');
@@ -101,7 +101,7 @@
     window.pins.removeActiveClass();
     window.pins.remove();
     window.popup.closeIfOpen();
-    sorting();
+    sortAll();
     window.pins.render(filteredAds);
   };
 
