@@ -19,8 +19,10 @@
     Y_MAX: 630
   };
 
-  var formElement = window.util.formElement;
-  var mainPinElement = window.util.mainPinElement;
+  var utilModule = window.util;
+  var loadPinsModule = window.loadPins;
+  var formElement = utilModule.formElement;
+  var mainPinElement = utilModule.mainPinElement;
   var addressFieldElement = formElement.querySelector('#address');
 
   // Перевод в десятичное число
@@ -91,9 +93,9 @@
   // Обработчик клика на метку (без перемещения)
   var mainPinElementClickHandler = function () {
     window.pageModes.switchToDynamic();
-    window.loadPins.switchFiltersToInertMode();
+    loadPinsModule.switchFiltersToInertMode();
     showAddress();
-    window.backend.load(window.loadPins.successHandler, window.loadPins.errorHandler);
+    window.backend.load(loadPinsModule.successHandler, loadPinsModule.errorHandler);
     mainPinElement.removeEventListener('mouseup', mainPinElementClickHandler);
   };
 

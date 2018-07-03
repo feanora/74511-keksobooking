@@ -7,17 +7,18 @@
   };
 
   var PIN_NUMBER = 5;
+  var utilModule = window.util;
 
   var pinTemplateElement = document.querySelector('#pin__template').content.querySelector('.map__pin');
   var pinsLocationElement = document.querySelector('.map__pins');
-  window.util.isPinActive = false;
+  utilModule.isPinActive = false;
 
   // Удаление у метки класса active, если он есть
   var removeActiveClass = function () {
-    if (window.util.isPinActive) {
+    if (utilModule.isPinActive) {
       var pinAvctivElement = pinsLocationElement.querySelector('.map__pin--active');
       pinAvctivElement.classList.remove('map__pin--active');
-      window.util.isPinActive = false;
+      utilModule.isPinActive = false;
     }
   };
 
@@ -33,7 +34,7 @@
       removeActiveClass();
       window.popup.renderElement(pin);
       pinElement.classList.add('map__pin--active');
-      window.util.isPinActive = true;
+      utilModule.isPinActive = true;
     });
     return pinElement;
   };

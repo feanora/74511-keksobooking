@@ -1,8 +1,11 @@
 'use strict';
 
 (function () {
-  var formElement = window.util.formElement;
-  var mainPinElement = window.util.mainPinElement;
+  var utilModule = window.util;
+  var mainPinModule = window.mainPin;
+  var imagesModule = window.images;
+  var formElement = utilModule.formElement;
+  var mainPinElement = utilModule.mainPinElement;
   var titleElement = formElement.querySelector('#title');
   var selectTypeElement = formElement.querySelector('#type');
   var priceElement = formElement.querySelector('#price');
@@ -32,8 +35,8 @@
 
   // Изменение значения минимальной цены и плейсхолдера в зависимости от типа жилья
   var changePriceValue = function () {
-    priceElement.min = window.util.housingTypeMap[selectTypeElement.value].PRICE;
-    priceElement.placeholder = window.util.housingTypeMap[selectTypeElement.value].PLACEHOLDER;
+    priceElement.min = utilModule.housingTypeMap[selectTypeElement.value].PRICE;
+    priceElement.placeholder = utilModule.housingTypeMap[selectTypeElement.value].PLACEHOLDER;
   };
 
   // Синхронизация количества комнат и количества гостей
@@ -101,18 +104,18 @@
   var pageReset = function () {
     window.pageModes.switchToInert();
     window.pins.remove();
-    window.util.isPinActive = false;
+    utilModule.isPinActive = false;
     window.popup.closeIfOpen();
     formElement.reset();
-    window.mainPin.reset();
-    window.images.avatarReset();
-    window.images.resetHousingPhoto();
-    window.mainPin.showAddress();
+    mainPinModule.reset();
+    imagesModule.avatarReset();
+    imagesModule.resetHousingPhoto();
+    mainPinModule.showAddress();
   };
 
   resetElement.addEventListener('click', function () {
     pageReset();
-    mainPinElement.addEventListener('mouseup', window.mainPin.elementClickHandler);
+    mainPinElement.addEventListener('mouseup', mainPinModule.elementClickHandler);
   });
 
   // Закрытие сообщения об успешной отправке формы
@@ -123,7 +126,7 @@
   };
 
   var successMessageEscPressHandler = function (evt) {
-    window.util.performActionIfEscEvent(evt, closeSuccessMessage);
+    utilModule.performActionIfEscEvent(evt, closeSuccessMessage);
   };
 
   var successMessageClickHandler = function () {
@@ -142,13 +145,13 @@
   };
 
   var closeErrorMessageEscPressHandler = function (evt) {
-    window.util.performActionIfEscEvent(evt, closeErrorMessage);
+    utilModule.performActionIfEscEvent(evt, closeErrorMessage);
   };
 
   // Обработчик успешной отправки формы
   var loadHandler = function () {
     pageReset();
-    mainPinElement.addEventListener('mouseup', window.mainPin.elementClickHandler);
+    mainPinElement.addEventListener('mouseup', mainPinModule.elementClickHandler);
     successMessageElement.classList.remove('hidden');
     document.addEventListener('click', successMessageClickHandler);
     document.addEventListener('keydown', successMessageEscPressHandler);

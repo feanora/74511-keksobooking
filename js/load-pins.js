@@ -24,17 +24,19 @@
   var housingFeaturesElement = filtersFormElement.querySelector('#housing-features');
   var selectFilterElements = filtersFormElement.querySelectorAll('select');
   var checkboxFilterElements = filtersFormElement.querySelectorAll('input');
+  var utilModule = window.util;
+  var pinsModule = window.pins;
 
   // Переключение фильтров в неактивное состояние
   var switchFiltersToInertMode = function () {
-    window.util.toggleDisabledFields(selectFilterElements, true);
-    window.util.toggleDisabledFields(checkboxFilterElements, true);
+    utilModule.toggleDisabledFields(selectFilterElements, true);
+    utilModule.toggleDisabledFields(checkboxFilterElements, true);
   };
 
   // Переключение фильтров в активное состояние
   var switchFiltersToDynamicMode = function () {
-    window.util.toggleDisabledFields(selectFilterElements, false);
-    window.util.toggleDisabledFields(checkboxFilterElements, false);
+    utilModule.toggleDisabledFields(selectFilterElements, false);
+    utilModule.toggleDisabledFields(checkboxFilterElements, false);
   };
 
   // Фильтрация массива объявлений по значению атрибута value у select
@@ -98,11 +100,11 @@
   // Отображение результата фильтрации
   var updateAds = function () {
     filteredAds = ads.slice();
-    window.pins.removeActiveClass();
-    window.pins.remove();
+    pinsModule.removeActiveClass();
+    pinsModule.remove();
     window.popup.closeIfOpen();
     sortAll();
-    window.pins.render(filteredAds);
+    pinsModule.render(filteredAds);
   };
 
   var filtersFormElementChangeHandler = function () {
@@ -114,7 +116,7 @@
   // Обработчик успешной загрузки данных для отрисовки меток похожих объявлений
   var successHandler = function (data) {
     ads = data;
-    window.pins.render(ads);
+    pinsModule.render(ads);
     switchFiltersToDynamicMode();
   };
 
